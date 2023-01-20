@@ -14,3 +14,16 @@ Features
 
 - a map used with the leaflet library, that visualizes the sigle datapoints.
 - the function to fill out forms to collect data and analyze it afterwards
+
+<h1>Permissions</h1>
+
+
+|                             | Owner         | Admin         | Editor        | Viewer       |
+| -------------               | ------------- | ------------- | ------------- |------------- |
+| Upload new data record      |               |               |               |              | 
+| Delete data record          |               |               |               |              | 
+| Comment a data record       |               |               |               |              | 
+| Tag a data record           |               |               |               |              | 
+| Make a bookmark on data     |               |               |               |              | 
+|                             |               |               |               |              | 
+
