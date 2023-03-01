@@ -1,5 +1,6 @@
 from django.shortcuts import render
-#from .models import User, Upload
+
+# from .models import User, Upload
 
 # def home(request):
 #     context = {'posts': Upload.objects.all()}
@@ -7,4 +8,4 @@ from django.shortcuts import render
 
 
 def about(request):
-    return render(request, "the_archive/about.html", {'title': 'About'})
+    return render(request, "the_archive/about.html", {"title": "About"})

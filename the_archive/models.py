@@ -15,77 +15,83 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
-# Using location field for django: https://django-location-field.readthedocs.io/en/latest/tutorials.html#using-django-location-field-in-the-django-admin
+from django.contrib.gis.db import models as gis_models
 
 
 class Location(models.Model):
-    #upload_id = models.ForeignKey(Upload, on_delete=models.PROTECT)
     city = models.CharField(max_length=200, null=True)
-    zip_code = models.DecimalField(null=True)
-    #location = PlainLocationField(based_fields=['city'],
-                                  #initial='-22.2876834,-49.1607606')
+    zip_code = models.IntegerField(null=True)
+    coordinates = gis_models.PointField(null=True)
 
     def __str__(self):
         return self.city
 
+
 class Upload(models.Model):
-    author = models.ForeignKey(User, on_delete=models.SET_NULL)
-    title = models.CharField(max_length=120) 
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
-    #location = models.ForeignKey
-    date_uploaded = models.DateTimeField(default=timezone.now)
-    date_edited = models.DateTimeField(null=True)
-    media_type = models.ForeignKey('MediaType', on_delete=models.SET_NULL)
-    link = models.ForeignKey('Link', null=True, on_delete=models.SET_NULL)
-    tags = models.ManyToManyField('Tag')    
+    location = models.ForeignKey(
+        Location, null=True, on_delete=models.PROTECT, related_name="uploads"
+    )
+    date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
+    date_edited = models.DateTimeField(auto_now=True, null=True)
+    media_type = models.ForeignKey(
+        "MediaType", on_delete=models.PROTECT, related_query_name="uploads_media_type"
+    )
+    link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
+    tags = models.ManyToManyField("Tag", related_name="uploads_tags")
 
     def __str__(self):
         return f"{self.author}, {self.title}, {self.caption},{self.date_uploaded}, {self.media_type}, {self.tags}"
-      
+
+    def comment_count(self):
+        return self.comment_set.count()
+
 
 class MediaType(models.Model):
     category = (
-        ('text', "Text"),
-        ('image', "Image"),
-        ('audio', "Audio"),
-        ('video', "Video"),
-        ('other', "Other")
+        ("document", "Document"),
+        ("image", "Image"),
+        ("audio", "Audio"),
+        ("video", "Video"),
+        ("other", "Other"),
     )
-    upload_id = models.ForeignKey(Upload, on_delete=models.PROTECT)
-    media_type = models.CharField(max_length=10, choices=category) #should this be also null=True
+    upload = models.ForeignKey(Upload, on_delete=models.PROTECT)
+    media_type = models.CharField(max_length=10, choices=category, null=True)
 
     def __str__(self):
         return self.media_type
 
 
-
 class Comment(models.Model):
-    upload_id = models.ForeignKey(Upload, on_delete=models.CASCADE) # upload_id or upload
-    author = models.ForeignKey(User, on_delete=models.SET_NULL)
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     content = models.TextField()
-    date_posted = models.DateTimeField(default=timezone.now)
-    date_edited = models.DateTimeField(null=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    date_edited = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
         return f"{self.author}, {self.content}, {self.date_posted},{self.date_edited}"
+
 
 class Bookmark(models.Model):
-    upload_id = models.ForeignKey(Upload, on_delete=models.CASCADE) # upload_id or upload
-    author = models.ForeignKey(User, null= True, on_delete=models.SET_NULL)
-    #tag_id = models.ForeignKey(Tag, on_delete=models.PROTECT, null=True)
-    tags = models.ManyToManyField('Tag')
-    link = models.ForeignKey('Link', null=True, on_delete=models.CASCADE)
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    tags = models.ManyToManyField("Tag")
+    link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.author}, {self.content}, {self.date_posted},{self.date_edited}"
-    
+
+
 class Tag(models.Model):
-    #upload_id = models.ForeignKey(Upload, on_delete=models.PROTECT)
     name = models.CharField(max_length=200, null=True)
 
     def __str__(self):
         return self.name
 
+
 class Link(models.Model):
     url = models.URLField(null=True)
-    
+    description = models.CharField(max_length=255)
