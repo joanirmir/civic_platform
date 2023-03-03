@@ -1,0 +1,16 @@
+{% extends "the_archive/base.html" %}
+{% block content %}
+
+<style>
+    /* Add a style to make text white */
+    a {
+      color: white;
+    }
+  </style>
+  
+
+<a href="{% url 'the_archive-list' %}">View all data</a>
+
+
+
+{% endblock content %}

@@ -17,6 +17,8 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gis_models
 
+import magic
+
 
 class Location(models.Model):
     city = models.CharField(max_length=200, null=True)
@@ -39,14 +41,30 @@ class Upload(models.Model):
     media_type = models.ForeignKey(
         "MediaType", on_delete=models.PROTECT, related_query_name="uploads_media_type"
     )
+    file = models.FileField(upload_to="uploads/", null=True)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
 
     def __str__(self):
-        return f"{self.author}, {self.title}, {self.caption},{self.date_uploaded}, {self.media_type}, {self.tags}"
+        return f"{self.author}, {self.title}, {self.caption},{self.date_uploaded}, {self.file}, {self.media_type}, {self.tags}"
 
     def comment_count(self):
         return self.comment_set.count()
+
+    def handle_uploaded_file(upload):
+        with open(upload.media_file.path, "rb") as f:
+            content = f.read()
+        mime = magic.from_buffer(content, mime=True)
+        if mime.startswith("image/"):
+            media_type = "image"
+        elif mime.startswith("audio/"):
+            media_type = "audio"
+        elif mime.startswith("video/"):
+            media_type = "video"
+        else:
+            media_type = "other"
+        media_type_obj = MediaType(upload=upload, media_type=media_type)
+        media_type_obj.save()
 
 
 class MediaType(models.Model):
