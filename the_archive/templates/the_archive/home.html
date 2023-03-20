@@ -1,0 +1,15 @@
+{% extends "the_archive/base.html" %}
+{% block content %}
+    {% for upload in uploads %}
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="#">{{ upload.author }}</a>
+                    <small class="text-muted">{{ upload.date_posted }}</small>
+                </div>
+                <h2><a class="article-title" href="#">{{ upload.title }}</a></h2>
+                <p class="article-content">{{ upload.content }}</p>
+            </div>
+        </article>
+    {% endfor %}
+{% endblock content %}
