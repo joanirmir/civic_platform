@@ -3,6 +3,8 @@ civic-platform-teamrando created by GitHub Classroom
 
 This is the backend for the civic_platform.
 
+***The technical documentation can be found here: [technical-documentation](documentation/technical-documentation.md)***
+
 <h1>Goal</h1>
 
 The civic platform allows users to upload data of different media types (text, image, audio, video, url) and add it to the database. For other users it is then possible to comment on the data, use tags to categorize it and to make bookmarks. The data is not only stored in the database, but used for discussion and to expand the knowledge and interest of the users.

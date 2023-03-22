@@ -3,11 +3,11 @@ version: "3.8"
 services: 
   app:
     build: .
-    ports:
-      - 8000:8000
+    image: app:django
     volumes:
       - ./:/django
-    image: app:django
+    ports:
+      - 80:8000
     container_name: django_container
     command: >
       sh -c "python manage.py wait_for_db &&
@@ -16,13 +16,17 @@ services:
              python manage.py runserver 0.0.0.0:8000"
     depends_on:
       - db
+    restart: unless-stopped
 
   db:
     image: postgis/postgis:15-3.3-alpine
     volumes: 
       - ./.data/db:/var/lib/postgresql/.data
+    ports:
+      - 5433:5432
+    container_name: postgres_db
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    container_name: postgres_db
+    restart: unless-stopped
