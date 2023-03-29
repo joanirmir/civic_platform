@@ -3,7 +3,8 @@ civic-platform-teamrando created by GitHub Classroom
 
 This is the backend for the civic_platform.
 
-***The technical documentation can be found here: [technical-documentation](documentation/technical-documentation.md)***
+- ***The GIT-Workflow is described here: [git-documentation](documentation/git-documentation.md)***
+- ***The technical documentation can be found here: [technical-documentation](documentation/technical-documentation.md)***
 
 <h1>Goal</h1>
 
