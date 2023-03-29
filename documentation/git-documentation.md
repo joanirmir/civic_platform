@@ -11,7 +11,7 @@ But we don't want to work on this branch, because its easy to mess things up.
 
 So, there are other branches. Each one has a specific task. 
 
-- **develop**: is derived from _main_. (Only one branch) 
+- **develop**: is derived from _main_. (Only one branch). collects the feature branches for roll out. 
 - **feature**: they are derived from _develop_. (for each feature of the project, one branch)
 - **hotfix**: they are derived from _main_. (if there is a bug on the production server, this is a small bugfix)
 - **release**: created before merging develop into _main_. (one at a time)
@@ -20,14 +20,14 @@ So, there are other branches. Each one has a specific task.
 
 
 ### feature branches 
-Each new feature we include (new model, new view) gets its own feature. We have to discuss if how we design one feature. Is it really just one view, or does it include more functions/classes? 
+Each new feature we include (new model, new view) gets its own feature. We have to discuss how we design one feature. Is it really just one view, or does it include more functions/classes? 
 
-Here is an example workflow. Remember: You create new branches of your local repositories. So there could be changes to _develop_ that are not synchronized with your machine. 
+Here is an example workflow. Remember: You create new branches of your local repositories. So there could be changes to  remote _develop_ that are not synchronized with your machine. 
 - **So always pull, before you create a new branch!**
-- **And always make shure that you are actually on the correct branch, before you start working. ;)**
+- **And always make sure that you are actually on the correct branch, before you start working. ;)**
 
 ```console
-# pull evertime, before you create a new branch!
+# pull everytime, before you create a new branch!
 git checkout develop
 git pull
 # create the new branch
@@ -41,7 +41,7 @@ When the work on one feature branch is finished and its tested, if the pull requ
 <img src="./img/feature-branches.svg" alt="main and develop branch" width="600px" style="margin: 20px 0 30px 0">
 
 ```console
-# pull evertime, before you merge! 
+# pull everytime, before you merge! 
 git checkout develop
 git pull
 # while you are checkout on develop, merge feature-xy
@@ -54,7 +54,27 @@ git branch -D feature-xy
 
 ## Release branches
 
-Once the develop branch reached a certain state, we can decide to roll out the integrated features. This can be done by creating a branch of develop and calling it something like ***release/0.1.0***. After this is done, nothing can be added to the upcoming release. Because we took a snapshot of _develop_ whe can, from there on, start working on it again. The release branch gets merged into _main_ if there are no bugs and afterwards, it is deleted. 
+Once the develop branch reaches a certain state, we can decide to roll out the integrated features. This can be done by creating a branch of develop and calling it something like ***release/0.1.0***. After this is done, nothing can be added to the upcoming release, except from bugfixes. Because we took a snapshot of _develop_ whe can, from there on, start working on it again. The release branch gets merged into _main_ if there are no bugs and afterwards, it is deleted. 
+
+```console
+git checkout develop
+git pull
+
+# create release branch. Number e.g 0.1.0 is the version number
+git checkout -b release/0.1.0
+
+# after everything is done merge into main
+git checkout main
+git pull
+git merge release/0.1.0
+
+# if changes were made to the release branch, merge back to develop, too
+git checkout develop
+git merge release/0.1.0
+
+# then delete release branch
+git branch -D release/0.1.0
+```
 
 <img src="./img/release-branches.svg" alt="main and develop branch" width="600px" style="margin: 20px 0 30px 0">
 
