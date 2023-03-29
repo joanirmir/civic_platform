@@ -6,7 +6,7 @@
 ## The branching
 
 ### develop branch
-We have on main-Branch. This is the branch that will be published on the production server. That one, that is available to the public. <br>
+We have one main-Branch. This is the branch that will be published on the production server. That one, that is available to the public. <br>
 But we don't want to work on this branch, because its easy to mess things up. 
 
 So, there are other branches. Each one has a specific task. 
