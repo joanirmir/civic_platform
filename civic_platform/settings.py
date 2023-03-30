@@ -15,8 +15,8 @@ from pathlib import Path
 import os
 import dotenv
 
+# load .env variables
 dotenv.load_dotenv()
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-(*a71%+!94r(kgbfgdhhyw+)bl(_c(#nb$@9($_&ftez0wmq+b"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -45,8 +45,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.gis", 
+    "django_extensions",
     "crispy_forms",
-    "django.contrib.gis"
 ]
 
 MIDDLEWARE = [
@@ -82,14 +83,6 @@ WSGI_APPLICATION = "civic_platform.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 if os.getenv("GITHUB_WORKFLOW"):
     DATABASES = {
         "default": {
@@ -106,6 +99,7 @@ else:
     DATABASES = {
         'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        #'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
@@ -162,6 +156,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = 'the_archive-home'
+LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = 'login'
