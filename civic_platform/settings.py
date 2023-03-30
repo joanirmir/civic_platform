@@ -111,6 +111,7 @@ else:
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
 
@@ -161,6 +162,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = 'blog-home'
+LOGIN_REDIRECT_URL = 'the_archive-home'
 
 LOGIN_URL = 'login'

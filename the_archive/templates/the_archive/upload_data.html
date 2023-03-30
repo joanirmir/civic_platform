@@ -1,0 +1,43 @@
+{% extends "the_archive/base.html" %}
+{% block content %}
+<h1>Upload data here</h1>
+<form method="POST" enctype="multipart/form-data">
+
+    <div>
+        {{ form.author.label_tag }}
+        {{ form.author }}
+      </div>
+      <div>
+        {{ form.title.label_tag }}
+        {{ form.title }}
+      </div>
+      <div>
+        {{ form.caption.label_tag }}
+        {{ form.caption }}
+      </div>
+      <div>
+        {{ form.location.label_tag }}
+        {{ form.location }}
+      </div>
+      <div>
+        {{ form.file.label_tag }}
+        {{ form.file }}
+      </div>
+      <div>
+        {{ form.media_type.label_tag }}
+        {{ form.media_type }}
+      </div>
+      <div>
+        {{ form.link.label_tag }}
+        {{ form.link }}
+      </div>
+      <div>
+        {{ form.tags.label_tag }}
+        {{ form.tags }}
+      </div>
+      <button type="submit">Upload</button>
+    </form>
+
+</form>
+
+{% endblock content %} 

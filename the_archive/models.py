@@ -30,18 +30,25 @@ class Location(models.Model):
 
 
 class Upload(models.Model):
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    category = (
+        ("document", "Document"),
+        ("image", "Image"),
+        ("audio", "Audio"),
+        ("video", "Video"),
+        ("other", "Other"),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
-    location = models.ForeignKey(
-        Location, null=True, on_delete=models.PROTECT, related_name="uploads"
-    )
+    location = models.CharField(max_length=100)
+    #     Location, null=True, on_delete=models.PROTECT, related_name="uploads"
+    # )
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
-    media_type = models.ForeignKey(
-        "MediaType", on_delete=models.PROTECT, related_query_name="uploads_media_type"
-    )
     file = models.FileField(upload_to="uploads/", null=True)
+    media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
 
@@ -50,36 +57,6 @@ class Upload(models.Model):
 
     def comment_count(self):
         return self.comment_set.count()
-
-    def handle_uploaded_file(upload):
-        with open(upload.media_file.path, "rb") as f:
-            content = f.read()
-        mime = magic.from_buffer(content, mime=True)
-        if mime.startswith("image/"):
-            media_type = "image"
-        elif mime.startswith("audio/"):
-            media_type = "audio"
-        elif mime.startswith("video/"):
-            media_type = "video"
-        else:
-            media_type = "other"
-        media_type_obj = MediaType(upload=upload, media_type=media_type)
-        media_type_obj.save()
-
-
-class MediaType(models.Model):
-    category = (
-        ("document", "Document"),
-        ("image", "Image"),
-        ("audio", "Audio"),
-        ("video", "Video"),
-        ("other", "Other"),
-    )
-    upload = models.ForeignKey(Upload, on_delete=models.PROTECT)
-    media_type = models.CharField(max_length=10, choices=category, null=True)
-
-    def __str__(self):
-        return self.media_type
 
 
 class Comment(models.Model):
