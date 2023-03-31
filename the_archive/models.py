@@ -42,7 +42,7 @@ class Upload(models.Model):
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, null=True)
     #     Location, null=True, on_delete=models.PROTECT, related_name="uploads"
     # )
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)

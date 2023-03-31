@@ -1,8 +1,9 @@
 {% extends "the_archive/base.html" %}
 {% block content %}
+
 <h1>Upload data here</h1>
 <form method="POST" enctype="multipart/form-data">
-
+{% csrf_token %}
     <div>
         {{ form.author.label_tag }}
         {{ form.author }}

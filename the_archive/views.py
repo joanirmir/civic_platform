@@ -31,7 +31,7 @@ class UploadDataView(CreateView):
     def form_valid(self, form):
         location_data = form.cleaned_data['location']
 
-        location = Location.objects.filer(city = location_data).first()
+        location = Location.objects.filter(city = location_data).first()
         if location is None:
             location = Location(city=location_data)
             location.save()
