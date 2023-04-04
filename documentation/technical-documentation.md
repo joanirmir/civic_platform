@@ -17,7 +17,7 @@ $ sudo docker compose build
 
 # this will start the docker containers (django and postgresql). 
 # again, takes a while during the first startup.
-$ sudo docker container up
+$ sudo docker compose up
 
 # it is possible, that during the first <docker compose up>, the database isnt ready, when django is ready. If so:
 # then stop the container by STRG+C. (stop the running containers). Then start it again.
