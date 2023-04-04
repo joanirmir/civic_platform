@@ -31,11 +31,19 @@ class UploadDataView(CreateView):
     def form_valid(self, form):
         location_data = form.cleaned_data['location']
 
-        location = Location.objects.filter(city = location_data).first()
-        if location is None:
-            location = Location(city=location_data)
-            location.save()
+        print(self.request.FILES["file"])
+
+        upload_file = self.request.FILES["file"]
+
+        with open(f"upload/test.png", "wb+") as target:
+            for chunk in upload_file.chunks():
+                print("chunk: ", chunk)
+                target.write(chunk)
+        # location = Location.objects.filter(city = location_data).first()
+        # if location is None:
+        #     location = Location(city=location_data)
+        #     location.save()
         
-        form.instance.location = location
+        # form.instance.location = location
 
         return super().form_valid(form)
