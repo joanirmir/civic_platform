@@ -29,21 +29,16 @@ class UploadDataView(CreateView):
     success_url = reverse_lazy('the_archive-list')
 
     def form_valid(self, form):
-        location_data = form.cleaned_data['location']
+        # self.request.FILES is a dict
+        # each entry is an UploadedFiles object
+        # https://docs.djangoproject.com/en/2.1/ref/files/uploads/#uploaded-files
+        file_upload = self.request.FILES
 
-        print(self.request.FILES["file"])
+        for file_single in file_upload.values():
+            print("____________")
+            # check for file type
+            print(file_single.content_type)
+            print("____________")
 
-        upload_file = self.request.FILES["file"]
-
-        with open(f"upload/test.png", "wb+") as target:
-            for chunk in upload_file.chunks():
-                print("chunk: ", chunk)
-                target.write(chunk)
-        # location = Location.objects.filter(city = location_data).first()
-        # if location is None:
-        #     location = Location(city=location_data)
-        #     location.save()
-        
-        # form.instance.location = location
-
+        form.save()
         return super().form_valid(form)
