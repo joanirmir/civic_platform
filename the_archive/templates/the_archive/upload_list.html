@@ -12,5 +12,9 @@
 <a href="{% url 'the_archive-list' %}">View all data</a>
 <a href="{% url 'the_archive-upload' %}">Upload new data</a>
 
+{% for upload in list_of_uploads %}
+  <p>{{ upload.author }}: <a href="{{ upload.file.url }}">{{ upload.file.url }}</a></p>
+
+{% endfor %}
 
 {% endblock content %}
