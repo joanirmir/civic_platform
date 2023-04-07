@@ -33,5 +33,6 @@ urlpatterns = [
 # Django acts as a file server. Removing this statement would deactivate
 # the functionality of downloading files
 # TODO: CHECK if Files are served in Produktion mode
+# https://simpleisbetterthancomplex.com/tutorial/2016/08/01/how-to-upload-files-with-django.html
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
