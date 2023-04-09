@@ -28,8 +28,19 @@ class Location(models.Model):
     def __str__(self):
         return self.city
 
+# custom Model manager
+# https://docs.djangoproject.com/en/4.1/topics/db/managers/ 
+class UploadObjects(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status="published")
 
 class Upload(models.Model):
+    # draft: not visible to public
+    # published: visible to all
+    pub_options = (
+        ("draft", "Draft"),
+        ("published", "Published"),
+    )
     category = (
         ("document", "Document"),
         ("image", "Image"),
@@ -43,14 +54,18 @@ class Upload(models.Model):
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
     location = models.CharField(max_length=100, null=True)
-    #     Location, null=True, on_delete=models.PROTECT, related_name="uploads"
-    # )
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
     file = models.FileField(upload_to="uploads/", null=True)
     media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
+    # by default the upload is not visible for the community
+    status = models.CharField(max_length=16, choices=pub_options, default="draft") 
+    # Model managers
+    objects = models.Manager()
+    uploadobjects = UploadObjects()
+
 
     def __str__(self):
         return f"{self.author}, {self.title}, {self.caption},{self.date_uploaded}, {self.file}, {self.media_type}, {self.tags}"

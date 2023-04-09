@@ -35,10 +35,7 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-
 INSTALLED_APPS = [
-    "the_archive.apps.TheArchiveConfig",
-    "users.apps.UsersConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -47,7 +44,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis", 
     "django_extensions",
+    # plugins
     "crispy_forms",
+    "rest_framework",
+    "drf_spectacular",
+    # apps
+    "the_archive.apps.TheArchiveConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -150,6 +153,19 @@ MEDIA_URL = '/media/'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'The Archive API',
+    'DESCRIPTION': 'API documentation for our app',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True
+    # ...
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

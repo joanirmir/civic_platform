@@ -1,13 +1,11 @@
 # import django models/libraries
 from django.shortcuts import render
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView 
+from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 
 # import DRF models/libraries
-from rest_framework.generics import ListAPIView, GenericAPIView
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
 
 # import app models
 from .models import User, Upload, Location, Link
@@ -23,32 +21,23 @@ def home(request):
 def about(request):
     return render(request, "the_archive/about.html", {"title": "About"})
 
+# TODO:
+# genericAPIView
+# drf spectacular
 
 # set limits for number of response elements
 class PaginatedProducts(LimitOffsetPagination):
     default_limit = 10
     max_limit = 100 # maximum size of the page that can be set by the API client
 
+class UploadListView(ListView):
+    model = Upload
+    context_object_name = "list_of_uploads"
+    template_name = "upload_list.html"
 
 class UploadListAPI(ListAPIView):
-    # in models.py we defined an alternative model manager: 
-    # uploadobjects -> UploadObjects()
-    queryset = Upload.uploadobjects.all()
+    queryset = Upload
     serializer_class = UploadSerializer
-    
-class UploadApi(GenericAPIView):
-    queryset = Upload.objects.all()
-    serializer_class = UploadSerializer
-
-    def get(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def post(self, request, *args, **kwargs):
-        print("æææææææææææææææææææææaaa")
-        print("æææææææææææææææææææææaaa")
-        return self.create(request, *args, **kwargs)
 
 class UploadDataView(CreateView):
     model = Upload
