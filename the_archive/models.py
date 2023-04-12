@@ -68,7 +68,7 @@ class Upload(models.Model):
 
 
     def __str__(self):
-        return f"{self.author}, {self.title}, {self.caption},{self.date_uploaded}, {self.file}, {self.media_type}, {self.tags}"
+        return f"id: {self.id}, {self.title}, {self.file}, {self.date_uploaded}"
 
     def comment_count(self):
         return self.comment_set.count()

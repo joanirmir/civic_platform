@@ -6,5 +6,6 @@ urlpatterns = [
     # path("", views.home, name="the_archive-home"),
     # path("about/", views.about, name="the_archive-about"),
     path("", views.UploadListAPI.as_view(), name="api-list-view"),
-    path("upload/<int:pk>", views.UploadApi.as_view(), name="api-upload"),
+    path("upload/", views.UploadAPI.as_view(), name="api-upload"),
+    path("upload/<int:pk>", views.UploadModifyApi.as_view(), name="api-mod"),
 ]
