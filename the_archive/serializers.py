@@ -18,9 +18,11 @@ class FileUploadField(serializers.FileField):
 
 
 class UploadSerializer(serializers.ModelSerializer):
-    user = serializers.IntegerField(read_only=True)
+    # user is logged in user
+    # readonly=True, because upload user is unique
+    # PrimaryKeyRelatedField takes user instance
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
     file = FileUploadField()
-    # user = serializers.PrimaryKeyRelatedField()
 
     class Meta:
         model = Upload 
