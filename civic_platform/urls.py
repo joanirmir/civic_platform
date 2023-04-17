@@ -21,22 +21,18 @@ from django.urls import path, include
 # import external libraries
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-# import app models
-from users import views as user_views
 
 
 urlpatterns = [
-    # API Schema:
+    # Swagger API Schema:
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     # Project UI
     path("admin/", admin.site.urls),
-    path("register/", user_views.register, name="register"),
-    path("profile/", user_views.profile, name="profile"),
     path("login/", auth_views.LoginView.as_view(template_name="users/login.html"), name="login"),
     path("logout/", auth_views.LogoutView.as_view(template_name="users/logout.html"), name="logout"),
     # API endpoints
     path("api/archive/", include("the_archive.urls")),
+    path("api/users/", include("users.urls")),
 ]

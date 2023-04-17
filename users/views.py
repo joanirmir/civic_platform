@@ -1,22 +1,41 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+# import django models/libraries
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm
+
+# import DRF models/libraries
+from rest_framework import status
+from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+# import app models
+from .serializers import UserSerializer #, UserSerializer
+from .models import CustomUser
 
 
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f"Your account has been created, log in!")
-            return redirect('login')
+class RegisterUserApiView(CreateAPIView):
 
-    else:
-        form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 
-@login_required
-def profile(request):
-    return render(request, 'users/profile.html')
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# @login_required
+class ProfileApiView(GenericAPIView):
+    queryset = CustomUser
+    serializer_class = UserSerializer
+
+    def get(self, request, *args, **kwargs):
+        print("_-_-_-_-_-_-_-_-_-_-_-_-")
+        print(request.user)
+        profile_instance = CustomUser.objects.get(user=request.user)
+        print(profile_instance)
+        serializer = UserSerializer(profile_instance)
+        return Response(serializer.data)
+

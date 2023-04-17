@@ -50,8 +50,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     # apps
-    "the_archive.apps.TheArchiveConfig",
     "users.apps.UsersConfig",
+    "the_archive.apps.TheArchiveConfig",
 ]
 
 MIDDLEWARE = [
@@ -132,6 +132,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# we have a custum user model, here we register it
+AUTH_USER_MODEL = "users.CustomUser"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

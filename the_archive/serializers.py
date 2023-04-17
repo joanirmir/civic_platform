@@ -9,9 +9,9 @@ CATEGORY = (
     ("other", "Other"),
 )
 
-# custom model manager
+# custom serializer field
 class FileUploadField(serializers.FileField):
-    # this prevents the file to be serialized 
+    # this prevents the file to be deserialized 
     # and throwing errors during validation of request.data
     def to_internal_value(self, data):
         return data
@@ -22,6 +22,7 @@ class UploadSerializer(serializers.ModelSerializer):
     # readonly=True, because upload user is unique
     # PrimaryKeyRelatedField takes user instance
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+    # use custom serializer field
     file = FileUploadField()
 
     class Meta:

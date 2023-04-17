@@ -1,23 +1,14 @@
-# from django.db import models
-# from django.utils import timezone
-# from django.contrib.auth.models import User
+# import python libraries
+import magic
 
-# class Upload(models.Model):
-#     title = models.CharField(max_length=120)
-#     content = models.TextField()
-#     date_posted = models.DateTimeField(default=timezone.now)
-#     author = models.ForeignKey(User, on_delete=models.CASCADE)
-
-#     def __str__(self):
-#         return self.title
-
-
+# import django models/libraries
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gis_models
 
-import magic
+# import project models
+from users.models import CustomUser
 
 
 class Location(models.Model):
@@ -49,7 +40,7 @@ class Upload(models.Model):
         ("other", "Other"),
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
@@ -76,7 +67,7 @@ class Upload(models.Model):
 
 class Comment(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
@@ -87,7 +78,7 @@ class Comment(models.Model):
 
 class Bookmark(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     tags = models.ManyToManyField("Tag")
     link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 

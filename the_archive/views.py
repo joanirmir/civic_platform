@@ -2,10 +2,10 @@
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.contrib.auth.models import User
 
 # import DRF models/libraries
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
-from .models import User, Upload, Location, Link
+from .models import Upload, Location, Link
 from .serializers import UploadSerializer
 from .forms import UploadForm
 
@@ -77,8 +77,8 @@ class UploadModifyApi(GenericAPIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        upload = self._get_object(pk)
-        serializer = UploadSerializer(upload)
+        upload_instance = self._get_object(pk)
+        serializer = UploadSerializer(upload_instance)
         return Response(serializer.data)
     
     def put(self, request, pk, format=None):
