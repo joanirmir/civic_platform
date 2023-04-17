@@ -9,20 +9,20 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 # import app models
-from .serializers import UserSerializer #, UserSerializer
+from .serializers import UserSerializer, UserCreateSerializer
 from .models import CustomUser
 
 
 class RegisterUserApiView(CreateAPIView):
 
     queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = UserSerializer(data=request.POST)
+        serializer = UserCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            user = serializer.save()
+            return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

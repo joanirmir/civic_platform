@@ -5,7 +5,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 # import app/project models
-from .managers import CustomUserManager
 
 
 class CustomUser(AbstractUser, PermissionsMixin):
@@ -17,8 +16,6 @@ class CustomUser(AbstractUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-
-    # objects = CustomUserManager()
 
     # set default username/login-name
     USERNAME_FIELD = "email"
