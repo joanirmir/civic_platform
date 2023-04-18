@@ -1,9 +1,18 @@
-from rest_framework import serializers
+# import django models/libraries
 from django.contrib.auth.models import User
+
+# import DRF models/libraries
+from rest_framework import serializers
+
+# import project/app stuff
+from common.utils import FileUploadField
 from .models import CustomUser
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # use custom serializer field
+    user_img = FileUploadField()
+
     class Meta:
         model = CustomUser
         fields = ["id", "email", "username", "first_name", "last_name", "user_img"]

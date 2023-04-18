@@ -1,4 +1,12 @@
 from rest_framework import serializers
+# import django models/libraries
+from django.contrib.auth.models import User
+
+# import DRF models/libraries
+from rest_framework import serializers
+
+# import project/app stuff
+from common.utils import FileUploadField
 from .models import Location, Upload, Comment, Bookmark, Tag, Link
 
 CATEGORY = (
@@ -8,13 +16,6 @@ CATEGORY = (
     ("video", "Video"),
     ("other", "Other"),
 )
-
-# custom serializer field
-class FileUploadField(serializers.FileField):
-    # this prevents the file to be deserialized 
-    # and throwing errors during validation of request.data
-    def to_internal_value(self, data):
-        return data
 
 
 class UploadSerializer(serializers.ModelSerializer):

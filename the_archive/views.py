@@ -16,6 +16,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Upload, Location, Link
 from .serializers import UploadSerializer
 from .forms import UploadForm
+from common.utils import get_object
 
 
 # set limits for number of response elements
@@ -65,24 +66,13 @@ class UploadModifyApi(GenericAPIView):
         },
     }
 
-    def _get_object(self, pk):
-        """
-        internal method:
-        Get db entry and return instance,
-        otherwise, raise 404
-        """
-        try:
-            return Upload.objects.get(pk=pk)
-        except Upload.DoesNotExist:
-            raise Http404
-
     def get(self, request, pk, format=None):
-        upload_instance = self._get_object(pk)
+        upload_instance = get_object(pk)
         serializer = UploadSerializer(upload_instance)
         return Response(serializer.data)
     
     def put(self, request, pk, format=None):
-        upload = self._get_object(pk)
+        upload = get_object(pk)
 
         # TODO: if-statement and serializer instance are repeated in self.patch
         if request.data.get("user") != upload.user.id:
@@ -90,7 +80,6 @@ class UploadModifyApi(GenericAPIView):
 
         # pass the upload instance and the changed values to serializer
         serializer = UploadSerializer(instance=upload, data=request.data, partial=True)
-
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -102,7 +91,7 @@ class UploadModifyApi(GenericAPIView):
         Use patch instead of update. Using patch doesn't require fields. 
         Only changed values have to be passed.
         """
-        upload = self._get_object(pk)
+        upload = get_object(pk)
 
         if request.data.get("user") != upload.user.id:
             return Response(self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST)
@@ -117,7 +106,7 @@ class UploadModifyApi(GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        upload = self._get_object(pk)
+        upload = get_object(pk)
         try:
             upload.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
