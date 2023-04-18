@@ -17,7 +17,7 @@ class Location(models.Model):
     coordinates = gis_models.PointField(null=True)
 
     def __str__(self):
-        return self.city
+        return f"{self.id}: {self.city}"
 
 # custom Model manager
 # https://docs.djangoproject.com/en/4.1/topics/db/managers/ 
@@ -73,7 +73,7 @@ class Comment(models.Model):
     date_edited = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        return f"{self.author}, {self.content}, {self.date_posted},{self.date_edited}"
+        return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
 
 
 class Bookmark(models.Model):
@@ -83,16 +83,19 @@ class Bookmark(models.Model):
     link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.author}, {self.content}, {self.date_posted},{self.date_edited}"
+        return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
 
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id}: {self.name}"
 
 
 class Link(models.Model):
     url = models.URLField(null=True)
     description = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.id}: {self.url}, {self.description}"

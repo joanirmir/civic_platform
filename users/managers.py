@@ -1,5 +1,5 @@
 # create custom user model, with email as unique identifier
-# https://testdriven.io/blog/django-custom-user-model/ 
+# https://testdriven.io/blog/django-custom-user-model/
 from django.contrib.auth.base_user import BaseUserManager
 
 
@@ -8,6 +8,7 @@ class CustomUserManager(BaseUserManager):
     Custom user model manager where email is the unique identifiers
     for authentication instead of usernames.
     """
+
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
@@ -42,4 +43,3 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_admin=True.")
 
         return self._create_user(email, password, **extra_fields)
-

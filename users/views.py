@@ -14,7 +14,6 @@ from .models import CustomUser
 
 
 class RegisterUserApiView(CreateAPIView):
-
     queryset = CustomUser.objects.all()
     serializer_class = UserCreateSerializer
 
@@ -26,16 +25,24 @@ class RegisterUserApiView(CreateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 # @login_required
-class ProfileApiView(GenericAPIView):
+class UserApiView(GenericAPIView):
     queryset = CustomUser
     serializer_class = UserSerializer
 
-    def get(self, request, *args, **kwargs):
-        print("_-_-_-_-_-_-_-_-_-_-_-_-")
-        print(request.user)
-        profile_instance = CustomUser.objects.get(user=request.user)
-        print(profile_instance)
-        serializer = UserSerializer(profile_instance)
-        return Response(serializer.data)
+    def _get_object(self, pk):
+        """
+        internal method:
+        Get db entry and return instance,
+        otherwise, raise 404
+        """
+        try:
+            return CostomUser.objects.get(pk=pk)
+        except CostumUser.DoesNotExist:
+            raise Http404
 
+    def get(self, request, pk, format=None):
+        user_instance = self._get_object(pk)
+        serializer = UploadSerializer(upload_instance)
+        return Response(serializer.data)
