@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Location, Upload, Comment, Bookmark, Tag, Link 
+from .models import Location, Upload, Comment, Bookmark, Tag, Link
 
 admin.site.register(Location)
 admin.site.register(Upload)

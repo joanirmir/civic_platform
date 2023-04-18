@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
-# from the_archive.views import 
+
+# from the_archive.views import
 
 urlpatterns = [
     # path("", views.home, name="the_archive-home"),

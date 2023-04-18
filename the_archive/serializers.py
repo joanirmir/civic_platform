@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 # import django models/libraries
 from django.contrib.auth.models import User
 
@@ -27,7 +28,7 @@ class UploadSerializer(serializers.ModelSerializer):
     file = FileUploadField()
 
     class Meta:
-        model = Upload 
+        model = Upload
         fields = "__all__"
         # exclude = ["user"]
         ordering = ["created"]

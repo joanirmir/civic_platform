@@ -1,5 +1,6 @@
 # import django models/libraries
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 
 # import DRF models/libraries
 from rest_framework import status
@@ -11,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 # import project/app stuff
 from .serializers import UserSerializer, UserCreateSerializer
 from .models import CustomUser
-from common.utils import get_object
+
 
 class RegisterUserApiView(CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -32,7 +33,7 @@ class UserApiView(GenericAPIView):
     serializer_class = UserSerializer
 
     def get(self, request, pk, format=None):
-        user_instance = self._get_object(pk)
+        user_instance = get_object_or_404(CustomUser, pk=pk)
         serializer = UserSerializer(user_instance)
         return Response(serializer.data)
 
@@ -41,11 +42,10 @@ class UserApiView(GenericAPIView):
         By using put, file has to be submitted again.
         Partitial update can be done by using patch.
         """
-        user = get_object(model=CustomUser, pk=pk)
+        user_instance = get_object_or_404(CustomUser, pk=pk)
 
         # pass the upload instance and the changed values to serializer
-        serializer = UserSerializer(instance=user, data=request.data)
-
+        serializer = UserSerializer(instance=user_instance, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -54,14 +54,15 @@ class UserApiView(GenericAPIView):
 
     def patch(self, request, pk, format=None):
         """
-        Use patch instead of update. Using patch doesn't require fields. 
+        Use patch instead of update. Using patch doesn't require fields.
         Only changed values have to be passed.
         """
-        user = get_object(model=CustomUser, pk=pk)
+        user_instance = get_object_or_404(CustomUser, pk=pk)
 
         # pass the upload instance and the changed values to serializer
-        serializer = UserSerializer(instance=user, data=request.data, partial=True)
-
+        serializer = UserSerializer(
+            instance=user_instance, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -69,9 +70,9 @@ class UserApiView(GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        user = get_object(model=CustomUser, pk=pk)
+        user_instance = get_object_or_404(CustomUser, pk=pk)
         try:
-            user.delete()
+            user_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)

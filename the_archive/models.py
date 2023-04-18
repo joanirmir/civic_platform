@@ -4,6 +4,7 @@ import magic
 # import django models/libraries
 from django.db import models
 from django.utils import timezone
+
 # from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gis_models
 
@@ -19,11 +20,13 @@ class Location(models.Model):
     def __str__(self):
         return f"{self.id}: {self.city}"
 
+
 # custom Model manager
-# https://docs.djangoproject.com/en/4.1/topics/db/managers/ 
+# https://docs.djangoproject.com/en/4.1/topics/db/managers/
 class UploadObjects(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(status="published")
+
 
 class Upload(models.Model):
     # draft: not visible to public
@@ -51,12 +54,13 @@ class Upload(models.Model):
     media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
-    # by default the upload is not visible for the community
-    status = models.CharField(max_length=16, choices=pub_options, default="draft") 
+    # by default the upload is not visible for the community,
+    # set to "published", to make upload available to everyone
+    status = models.CharField(max_length=16, choices=pub_options, default="draft")
+
     # Model managers
     objects = models.Manager()
     uploadobjects = UploadObjects()
-
 
     def __str__(self):
         return f"id: {self.id}, {self.title}, {self.file}, {self.date_uploaded}"

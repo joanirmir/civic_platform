@@ -1,8 +1,5 @@
 # import django models/libraries
-from django.http import Http404
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.contrib.auth.models import User
+from django.shortcuts import render, get_object_or_404
 
 # import DRF models/libraries
 from rest_framework import status
@@ -15,18 +12,16 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # import app models
 from .models import Upload, Location, Link
 from .serializers import UploadSerializer
-from .forms import UploadForm
-from common.utils import get_object
 
 
 # set limits for number of response elements
 class PaginatedProducts(LimitOffsetPagination):
     default_limit = 10
-    max_limit = 100 # maximum size of the page that can be set by the API client
+    max_limit = 100  # maximum size of the page that can be set by the API client
 
 
 class UploadListAPI(ListAPIView):
-    # in models.py we defined a custom model manager: 
+    # in models.py we defined a custom model manager:
     # uploadobjects -> UploadObjects()
     # so its possible to only list elements that have "status=published"
     queryset = Upload.uploadobjects.all()
@@ -43,8 +38,8 @@ class UploadAPI(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
-            # read logged in user 
-            # and set as upload__user: 
+            # read logged in user
+            # and set as upload__user:
             # can't be changed afterwards > readonly=True
             serializer.validated_data.update({"user": request.user})
             serializer.save()
@@ -52,34 +47,37 @@ class UploadAPI(CreateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
 class UploadModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
+
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
 
     warnings = {
-        "user_locked": {
-            "warning": "Its not possible to change the upload user."
-        },
+        "user_locked": {"warning": "Its not possible to change the upload user."},
     }
 
     def get(self, request, pk, format=None):
-        upload_instance = get_object(pk)
+        upload_instance = get_object_or_404(Upload, pk=pk)
         serializer = UploadSerializer(upload_instance)
         return Response(serializer.data)
-    
+
     def put(self, request, pk, format=None):
-        upload = get_object(pk)
+        upload_instance = get_object_or_404(Upload, pk=pk)
 
         # TODO: if-statement and serializer instance are repeated in self.patch
-        if request.data.get("user") != upload.user.id:
-            return Response(self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST)
+        if request.data.get("user") != upload_instance.user.id:
+            return Response(
+                self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST
+            )
 
         # pass the upload instance and the changed values to serializer
-        serializer = UploadSerializer(instance=upload, data=request.data, partial=True)
+        serializer = UploadSerializer(
+            instance=upload_instance, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -88,17 +86,22 @@ class UploadModifyApi(GenericAPIView):
 
     def patch(self, request, pk, format=None):
         """
-        Use patch instead of update. Using patch doesn't require fields. 
+        Use patch instead of update. Using patch doesn't require fields.
         Only changed values have to be passed.
         """
-        upload = get_object(pk)
+        upload_instance = get_object_or_404(Upload, pk=pk)
 
-        if request.data.get("user") != upload.user.id:
-            return Response(self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST)
+        # check if request tries to change unmdifieable upload user
+        if (request.data.get("user")
+            and request.data.get("user") != upload_instance.user.id):
+            return Response(
+                self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST
+            )
 
         # pass the upload instance and the changed values to serializer
-        serializer = UploadSerializer(instance=upload, data=request.data, partial=True)
-
+        serializer = UploadSerializer(
+            instance=upload_instance, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -106,7 +109,8 @@ class UploadModifyApi(GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        upload = get_object(pk)
+        upload_instance = get_object_or_404(Upload, pk=pk)
+
         try:
             upload.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
