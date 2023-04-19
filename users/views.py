@@ -43,7 +43,6 @@ class UserApiView(GenericAPIView):
         Partitial update can be done by using patch.
         """
         user_instance = get_object_or_404(CustomUser, pk=pk)
-
         # pass the upload instance and the changed values to serializer
         serializer = UserSerializer(instance=user_instance, data=request.data)
         if serializer.is_valid():
@@ -58,7 +57,6 @@ class UserApiView(GenericAPIView):
         Only changed values have to be passed.
         """
         user_instance = get_object_or_404(CustomUser, pk=pk)
-
         # pass the upload instance and the changed values to serializer
         serializer = UserSerializer(
             instance=user_instance, data=request.data, partial=True

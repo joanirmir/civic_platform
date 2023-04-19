@@ -15,7 +15,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     user_img = models.ImageField(
-        upload_to="user_img", default="default/default-user.jpg"
+        upload_to="user_img", default="default/default-user.jpg", blank=True
     )
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)

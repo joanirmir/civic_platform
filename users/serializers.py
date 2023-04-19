@@ -11,7 +11,7 @@ from .models import CustomUser
 
 class UserSerializer(serializers.ModelSerializer):
     # use custom serializer field
-    user_img = FileUploadField()
+    user_img = FileUploadField(required=False)
 
     class Meta:
         model = CustomUser
