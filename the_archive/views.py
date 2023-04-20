@@ -22,7 +22,7 @@ class PaginatedProducts(LimitOffsetPagination):
 
 class UploadListAPI(ListAPIView):
     # in models.py we defined a custom model manager:
-    # uploadobjects -> UploadObjects()
+    # upload objects -> UploadObjects()
     # so its possible to only list elements that have "status=published"
     queryset = Upload.uploadobjects.all()
     # queryset = Upload.objects.all()
@@ -91,7 +91,7 @@ class UploadModifyApi(GenericAPIView):
         """
         upload_instance = get_object_or_404(Upload, pk=pk)
 
-        # check if request tries to change unmdifieable upload user
+        # check if request tries to change unmodifiable upload user
         if (request.data.get("user")
             and request.data.get("user") != upload_instance.user.id):
             return Response(

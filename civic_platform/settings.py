@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# we have a custum user model, here we register it
+# we have a custom user model, here we register it
 AUTH_USER_MODEL = "users.CustomUser"
 
 # Internationalization

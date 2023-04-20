@@ -30,8 +30,6 @@ urlpatterns = [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     # Project UI
     path("admin/", admin.site.urls),
-    path("login/", auth_views.LoginView.as_view(template_name="users/login.html"), name="login"),
-    path("logout/", auth_views.LogoutView.as_view(template_name="users/logout.html"), name="logout"),
     # API endpoints
     path("api/archive/", include("the_archive.urls")),
     path("api/users/", include("users.urls")),
