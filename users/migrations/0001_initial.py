@@ -2,8 +2,13 @@
 
 from django.db import migrations, models
 import django.utils.timezone
-import users.managers
+#import users.managers
 
+
+def remove_managers_import(apps, schema_editor):
+    # Remove the import statement for 'users.managers' from migration files
+    MyModel = apps.get_model('users', 'MyModel')
+    MyModel.migrations.delete()
 
 class Migration(migrations.Migration):
     initial = True
@@ -13,6 +18,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(remove_managers_import),
+
         migrations.CreateModel(
             name="CustomUser",
             fields=[
@@ -85,7 +92,7 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "users",
             },
             managers=[
-                ("objects", users.managers.CustomUserManager()),
+                #("objects", users.managers.CustomUserManager()),
             ],
         ),
     ]
