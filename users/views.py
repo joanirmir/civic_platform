@@ -40,7 +40,7 @@ class UserApiView(GenericAPIView):
     def put(self, request, pk, format=None):
         """
         By using put, file has to be submitted again.
-        Partitial update can be done by using patch.
+        Partial update can be done by using patch.
         """
         user_instance = get_object_or_404(CustomUser, pk=pk)
         # pass the upload instance and the changed values to serializer

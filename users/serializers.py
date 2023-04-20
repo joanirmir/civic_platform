@@ -1,5 +1,5 @@
 # import django models/libraries
-from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 # import DRF models/libraries
 from rest_framework import serializers
