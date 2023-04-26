@@ -5,6 +5,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("register/", views.register, name='register'),
-    path("profile/", views.profile, name='profile'),
+    path("register/", views.RegisterUserApiView.as_view(), name="register"),
+    path("profile/<int:pk>", views.UserApiView.as_view(), name="logged-in-profile"),
 ]

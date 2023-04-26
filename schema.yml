@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: The Archive API
+  version: 1.0.0
+  description: API documentation for our app
+paths:
+  /api/archive/:
+    get:
+      operationId: archive_list
+      tags:
+      - archive
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Upload'
+          description: ''
+  /api/archive/upload/{id}:
+    get:
+      operationId: archive_upload_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - archive
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+          description: ''
+    post:
+      operationId: archive_upload_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - archive
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+          description: ''
+components:
+  schemas:
+    MediaTypeEnum:
+      enum:
+      - document
+      - image
+      - audio
+      - video
+      - other
+      type: string
+      description: |-
+        * `document` - Document
+        * `image` - Image
+        * `audio` - Audio
+        * `video` - Video
+        * `other` - Other
+    StatusEnum:
+      enum:
+      - draft
+      - published
+      type: string
+      description: |-
+        * `draft` - Draft
+        * `published` - Published
+    Upload:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          nullable: true
+          maxLength: 50
+        title:
+          type: string
+          maxLength: 120
+        caption:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+          maxLength: 100
+        date_uploaded:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        date_edited:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        file:
+          type: string
+          format: uri
+          nullable: true
+        media_type:
+          $ref: '#/components/schemas/MediaTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        link:
+          type: integer
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: integer
+      required:
+      - date_edited
+      - date_uploaded
+      - id
+      - media_type
+      - tags
+      - title
+    UploadRequest:
+      type: object
+      properties:
+        author:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 50
+        title:
+          type: string
+          minLength: 1
+          maxLength: 120
+        caption:
+          type: string
+          nullable: true
+          minLength: 1
+        location:
+          type: string
+          nullable: true
+          minLength: 1
+          maxLength: 100
+        file:
+          type: string
+          format: binary
+          nullable: true
+        media_type:
+          $ref: '#/components/schemas/MediaTypeEnum'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        link:
+          type: integer
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: integer
+      required:
+      - media_type
+      - tags
+      - title
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
