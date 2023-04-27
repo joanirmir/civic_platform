@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 # import project/app stuff
-from common.utils import FileUploadField
+from common.utils import FileUploadField, FileValidator
 from .models import Location, Upload, Comment, Bookmark, Tag, Link
 
 CATEGORY = (
@@ -20,12 +20,12 @@ CATEGORY = (
 
 
 class UploadSerializer(serializers.ModelSerializer):
-    # user is logged in user
+    # user is logged-in user
     # readonly=True, because upload user is unique
     # PrimaryKeyRelatedField takes user instance
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     # use custom serializer field
-    file = FileUploadField()
+    file = FileUploadField(validators=[FileValidator()])
 
     class Meta:
         model = Upload

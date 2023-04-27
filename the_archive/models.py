@@ -4,8 +4,6 @@ import magic
 # import django models/libraries
 from django.db import models
 from django.utils import timezone
-
-# from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gis_models
 
 # import project models
@@ -60,6 +58,7 @@ class Upload(models.Model):
 
     # Model managers
     objects = models.Manager()
+    # custom model manager. Sort objects by date added
     uploadobjects = UploadObjects()
 
     def __str__(self):
