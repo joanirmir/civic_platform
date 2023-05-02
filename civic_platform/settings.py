@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     "django.contrib.gis", 
     "django_extensions",
     # plugins
-    "crispy_forms",
     "rest_framework",
     "drf_spectacular",
     "drf_spectacular_sidecar",
@@ -153,6 +152,10 @@ STATIC_URL = "static/"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

@@ -6,4 +6,5 @@ class FileUploadField(serializers.FileField):
     # and throwing errors during validation of request.data
     def to_internal_value(self, data):
         # just return data, as it is passed
+        print("__WHERE_am_I__")
         return data
