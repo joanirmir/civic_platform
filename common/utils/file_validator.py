@@ -41,7 +41,7 @@ class FileValidator(object):
 
         # check if the file extension (e.g .jpg) is matching the mime type of the file
         # https://mimetype.io/all-types/
-        if py_magic not in ALLOWEDFILETYPES.get(file_extension):
+        if py_magic not in ALLOWEDFILETYPES.get(file_extension).get("mime_type"):
             raise serializers.ValidationError(
                 {"error": "File extension mismatching mime type of file"}
             )
