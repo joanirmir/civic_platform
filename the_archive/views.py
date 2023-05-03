@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, 
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
@@ -42,6 +42,7 @@ class UploadAPI(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
+        print("***")
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
             # read logged in user
