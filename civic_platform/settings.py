@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # apps
     "users.apps.UsersConfig",
     "the_archive.apps.TheArchiveConfig",
+    "geolocation.apps.GeolocationConfig"
 ]
 
 MIDDLEWARE = [
