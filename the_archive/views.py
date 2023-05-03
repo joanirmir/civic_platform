@@ -37,17 +37,11 @@ class UploadAPI(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UploadSerializer(data=request.data)
-        print("___before_check___")
+
         if serializer.is_valid():
             # read logged in user
             # and set as upload__user:
             # can't be changed afterwards > readonly=True
-            print("_________________")
-            print(dir(request.FILES["file"].file))            
-            print("_-_-_-_-_-_-_-_-__")
-            print(dir(request.FILES["file"]))            
-            print("--------------------")
-            print(request.FILES["file"].name)
             serializer.validated_data.update({"user": request.user})
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -99,8 +93,10 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         # check if request tries to change unmodifiable upload user
-        if (request.data.get("user")
-            and request.data.get("user") != upload_instance.user.id):
+        if (
+            request.data.get("user")
+            and request.data.get("user") != upload_instance.user.id
+        ):
             return Response(
                 self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST
             )
