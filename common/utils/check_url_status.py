@@ -1,13 +1,16 @@
-import requests
-from django.http import Http404
+import requests, json
+from rest_framework.response import Response
+from rest_framework import status
 
 
 def is_valid_url(url):
     try:
         response = requests.get(url)
         if response.status_code in [200, 201, 202, 203]:
-            return True
+            return Response({'status': 'valid'}, status=status.HTTP_200_OK)
         else:
-            raise Http404("The URL you entered is not valid.")
+            error_data = {'error': 'The URL you entered is not valid.'}
+            return Response(error_data, status=response.status_code)
     except:
-        raise Http404("The URL you entered is not valid.")
+        error_data = {'error': 'The URL you entered is not valid.'}
+        return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
