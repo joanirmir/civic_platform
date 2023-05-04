@@ -1,3 +1,4 @@
+import os
 # import django models/libraries
 from django.shortcuts import render, get_object_or_404
 
@@ -12,7 +13,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 # import app models
 from .models import Upload, Location, Link
 from .serializers import UploadSerializer
-
+from common.utils import write_file
 
 # set limits for number of response elements
 class PaginatedProducts(LimitOffsetPagination):
@@ -42,8 +43,14 @@ class UploadAPI(CreateAPIView):
             # read logged in user
             # and set as upload__user:
             # can't be changed afterwards > readonly=True
+            print("validated:::::::::::")
             serializer.validated_data.update({"user": request.user})
+            file_path = write_file(request.FILES.get("file"))
+            serializer.validated_data.update({"file": file_path})
+            print(type(file_path))
+
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

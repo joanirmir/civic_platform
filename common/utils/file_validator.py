@@ -1,6 +1,5 @@
 import magic
 import mimetypes
-import os
 
 # import django models/libraries
 from django.utils.deconstruct import deconstructible
@@ -26,7 +25,7 @@ class FileValidator(object):
         self.check_file_validity(value)
 
     def check_file_validity(self, in_memory_file):
-        file_extension = f".{in_memory_file.name.split('.')[1]}"
+        file_extension = f".{in_memory_file.name.split('.')[-1]}"
 
         if not ALLOWEDFILETYPES.get(file_extension):
             raise serializers.ValidationError(
