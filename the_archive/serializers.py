@@ -43,7 +43,7 @@ class UploadSerializer(serializers.ModelSerializer):
         # Get the city string and zip_code from the validated data
         city = validated_data.get("location")
         zip_code = validated_data.get("zip_code")
-        
+
         # Look up the coordinates
         latitude, longitude = Location.get_coordinates_from_city(f"{zip_code},{city}")
 
