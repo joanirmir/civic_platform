@@ -27,8 +27,9 @@ class UploadSerializer(serializers.ModelSerializer):
     # PrimaryKeyRelatedField takes user instance
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = serializers.CharField(max_length=50)
-    zip_code = serializers.IntegerField(source="location.zip_code")
-    #source="location.zip_code"
+    zip_code = serializers.IntegerField()
+    # source="location.zip_code"
+    # source="location.zip_code"
     # use custom serializer field
     file = FileUploadField()
 
@@ -37,43 +38,30 @@ class UploadSerializer(serializers.ModelSerializer):
         fields = "__all__"
         # exclude = ["user"]
         ordering = ["created"]
-        
+
     def create(self, validated_data):
-    
-        print("********")
-
-        # # Check if data is valid
-        # if not serializers.is_valid(validated_data):
-        #     raise serializers.ValidationError("Invalid input data")
-
-        
-        # Get the city string from the validated data
+        # Get the city string and zip_code from the validated data
         city = validated_data.get("location")
         zip_code = validated_data.get("zip_code")
-
-        address = f"{zip_code},{city}"
-
-        # Loop up the coordinates and zip code 
-        latitude, longitude = Location.get_coordinates_from_city(address)
-        #zip_code = Location.get_zip_code_from_city(city)
-
         
+        # Look up the coordinates
+        latitude, longitude = Location.get_coordinates_from_city(f"{zip_code},{city}")
+
         # Create a GEOSPoint object for the city coordinates
         coordinates = GEOSPoint(latitude, longitude)
 
         # Create a Location object for the city
-        location, _ = Location.objects.get_or_create(city=city, zip_code=zip_code, coordinates=coordinates)
+        location, _ = Location.objects.get_or_create(
+            city=city, zip_code=zip_code, coordinates=coordinates
+        )
 
         validated_data["location"] = location
 
-        new_data = validated_data.copy()
-        del new_data["zip_code"]
+        del validated_data["zip_code"]
+        # validated_data.pop("zip_code", None)
 
-        #del validated_data["zip_code"]
+        upload_instance = super().create(validated_data)
+        upload_instance.zip_code = None
+        upload_instance.save()
 
-        
-
-        instance = super().create(new_data)
-        
-        return instance
-    
+        return upload_instance

@@ -12,6 +12,7 @@ from django.contrib.gis.db import models as gis_models
 from users.models import CustomUser
 from geolocation.models import Location
 
+
 # custom Model manager
 # https://docs.djangoproject.com/en/4.1/topics/db/managers/
 class UploadObjects(models.Manager):

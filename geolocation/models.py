@@ -21,16 +21,3 @@ class Location(models.Model):
             return location.latitude, location.longitude
         except:
             return (None, None)
-
-    # @staticmethod
-    # def get_zip_code_from_city(city: str):
-    #     """get the zip code from city"""
-    #     breakpoint()
-    #     try:
-    #         geocoder = Nominatim(user_agent="geolocation")
-    #         location = geocoder.geocode(city)
-    #         data = location.raw
-    #         zip_code = location.raw['address']['postcode']
-    #         return zip_code
-    #     except:
-    #         return (None)

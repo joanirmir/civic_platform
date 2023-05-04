@@ -14,9 +14,8 @@ from .models import Upload, Location, Link
 from .serializers import UploadSerializer
 
 # import for TokenAuthentication
-#from rest_framework.authentication import TokenAuthentication
-#from .permission import IsAdminOrReadOnly
-
+# from rest_framework.authentication import TokenAuthentication
+# from .permission import IsAdminOrReadOnly
 
 
 # set limits for number of response elements
@@ -32,7 +31,7 @@ class UploadListAPI(ListAPIView):
     queryset = Upload.uploadobjects.all()
     # queryset = Upload.objects.all()
     serializer_class = UploadSerializer
-    #permission_classes = [IsAdminOrReadOnly, ]
+    # permission_classes = [IsAdminOrReadOnly, ]
 
 
 class UploadAPI(CreateAPIView):
@@ -99,8 +98,10 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         # check if request tries to change unmodifiable upload user
-        if (request.data.get("user")
-            and request.data.get("user") != upload_instance.user.id):
+        if (
+            request.data.get("user")
+            and request.data.get("user") != upload_instance.user.id
+        ):
             return Response(
                 self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST
             )
