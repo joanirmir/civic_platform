@@ -33,8 +33,8 @@ class UploadSerializerTest(APITestCase):
             },
             format="multipart",
         )
-        print("****")
-        print(response.data)
+        
+        
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
