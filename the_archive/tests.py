@@ -18,7 +18,7 @@ class UploadSerializerTest(APITestCase):
         file = SimpleUploadedFile("test_file.txt", b"file_content")
 
         # create a tag
-        tag = Tag.objects.create(name="testtag")
+        tag = Tag.objects.create(name="test")
 
         # make a POST request to the API to create a new upload
         response = self.client.post(
@@ -37,22 +37,4 @@ class UploadSerializerTest(APITestCase):
         print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # def test_create(self):
-    #     # create a test user
-    #     user = User.objects.create_user(username="testuser", password="testpass123")
-    #     self.client.force_login(user)
 
-    #     data = {
-    #         "location": "Berlin",
-    #         "zip_code": 13351,
-    #         "file": "file.pdf"
-    #     }
-
-    #     url = reverse("api-list-view")
-    #     response = self.client.post(url, data)
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    #     upload = Upload.objects.last()
-    #     self.assertEqual(upload.location.city, "Berlin")
-    #     self.assertEqual(upload.location.zip_code, 13351)
-    #     self.assertEqual(upload.file.name, "file.pdf")
