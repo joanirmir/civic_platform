@@ -11,7 +11,6 @@ def write_file(upload_file):
     category = ALLOWEDFILETYPES.get(file_extension).get("category")
     media_folder = os.path.join(settings.MEDIA_ROOT, category)
 
-    # if the folder e.g "video" doesn't exist, create it
     if not os.path.exists(media_folder):
         os.mkdir(media_folder)
 

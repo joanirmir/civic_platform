@@ -12,7 +12,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
 from .models import Upload, Location, Link
-from .serializers import UploadSerializer
+from .serializers import UploadSerializer, UploadPostSerializer
 from common.utils import write_file
 
 # set limits for number of response elements
@@ -32,26 +32,27 @@ class UploadListAPI(ListAPIView):
 
 class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
-    serializer_class = UploadSerializer
+    serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        serializer = UploadSerializer(data=request.data)
+        serializer = UploadPostSerializer(data=request.data)
 
         if serializer.is_valid():
-            # read logged in user
-            # and set as upload__user:
+            # read logged in user and set as upload__user:
             # can't be changed afterwards > readonly=True
-            print("validated:::::::::::")
             serializer.validated_data.update({"user": request.user})
+
             file_path = write_file(request.FILES.get("file"))
             serializer.validated_data.update({"file": file_path})
-            print(type(file_path))
+            instance = serializer.save()
 
-            serializer.save()
+            # UploadPostSerializer is only for input
+            # for Response create instance of UpolaodSerialzer instead
+            serialized_instance = UploadSerializer(instance)
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -60,7 +61,6 @@ class UploadModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
-
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
 
@@ -94,11 +94,10 @@ class UploadModifyApi(GenericAPIView):
 
     def patch(self, request, pk, format=None):
         """
-        Use patch instead of update. Using patch doesn't require fields.
+        Use patch instead of put. Using patch doesn't require fields.
         Only changed values have to be passed.
         """
         upload_instance = get_object_or_404(Upload, pk=pk)
-
         # check if request tries to change unmodifiable upload user
         if (
             request.data.get("user")
@@ -122,7 +121,8 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         try:
-            upload.delete()
+            #os.remove(upload_instance.file)
+            upload_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)

@@ -2,23 +2,6 @@ import json
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-
-
-def get_request(method, **kwargs):
-    factory = APIRequestFactory()
-    request_method = getattr(factory, method)
-    pk = kwargs.get("data").pop("pk")
-    content_type = "application/json"
-
-    request = request_method(
-        f"user/profile/<int:{pk}>",
-        json.dumps(kwargs.get("data")),
-        content_type=content_type,
-    )
-
-    return request
-
 
 # https://testdriven.io/blog/django-custom-user-model/
 class UsersManagersTests(TestCase):

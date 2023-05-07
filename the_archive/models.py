@@ -41,6 +41,7 @@ class Upload(models.Model):
         ("other", "Other"),
     )
 
+    file = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
@@ -48,7 +49,6 @@ class Upload(models.Model):
     location = models.CharField(max_length=100, null=True)
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
-    file = models.CharField(null=True, max_length=255)
     media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
@@ -66,6 +66,11 @@ class Upload(models.Model):
 
     def comment_count(self):
         return self.comment_set.count()
+    
+    def delete(self):
+        import os
+        os.remove(self.file)
+        super(Upload, self).delete()
 
 
 class Comment(models.Model):
