@@ -1,6 +1,9 @@
 import os
+import magic
+
 # import django models/libraries
 from django.shortcuts import render, get_object_or_404
+from django.http import FileResponse
 
 # import DRF models/libraries
 from rest_framework import status
@@ -126,3 +129,21 @@ class UploadModifyApi(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class UploadDownload(GenericAPIView):
+    queryset = Upload.objects.all()
+
+    def get(self, request, pk):
+        upload_instance = Upload.objects.get(pk=pk)
+        upload_file = open(upload_instance.file, "rb")
+
+        mime = magic.Magic(mime=True)
+        py_magic = mime.from_file(upload_instance.file)
+
+        filename = os.path.basename(upload_instance.file)
+
+        response = FileResponse(upload_file, content_type=f"{py_magic}")
+        response['Content-Length'] = f"{os.path.getsize(upload_instance.file)}"
+        response['Content-Disposition'] = f"attachment; filename={filename}"
+
+        return response
