@@ -33,13 +33,6 @@ class Upload(models.Model):
         ("draft", "Draft"),
         ("published", "Published"),
     )
-    category = (
-        ("document", "Document"),
-        ("image", "Image"),
-        ("audio", "Audio"),
-        ("video", "Video"),
-        ("other", "Other"),
-    )
 
     file = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
@@ -49,7 +42,7 @@ class Upload(models.Model):
     location = models.CharField(max_length=100, null=True)
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
-    media_type = models.CharField(max_length=10, choices=category)
+    media_type = models.CharField(max_length=10, blank=True)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")
     # by default the upload is not visible for the community,
@@ -95,7 +88,7 @@ class Bookmark(models.Model):
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=200, null=True)
+    name = models.CharField(max_length=200, blank=False)
 
     def __str__(self):
         return f"{self.id}: {self.name}"

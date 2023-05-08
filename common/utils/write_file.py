@@ -30,4 +30,4 @@ def write_file(upload_file):
         for chunk in upload_file.chunks():
             destination.write(chunk)
 
-    return file_path
+    return (file_path, category)

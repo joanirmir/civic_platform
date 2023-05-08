@@ -55,7 +55,7 @@ class UploadApiTests(TestCase):
         category = folders_list[-1]
         media_root = folders_list[-2]
         # was file correctly categorized?
-        self.assertEqual("text",category)
+        self.assertEqual("document", category)
         self.assertEqual("media", media_root)
 
         upload_instance = Upload.objects.get(pk=response.data.get("id"))

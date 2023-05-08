@@ -47,8 +47,9 @@ class UploadAPI(CreateAPIView):
             # can't be changed afterwards > readonly=True
             serializer.validated_data.update({"user": request.user})
 
-            file_path = write_file(request.FILES.get("file"))
+            file_path, category = write_file(request.FILES.get("file"))
             serializer.validated_data.update({"file": file_path})
+            serializer.validated_data.update({"media_type": category})
             instance = serializer.save()
 
             # UploadPostSerializer is only for input
@@ -132,6 +133,7 @@ class UploadModifyApi(GenericAPIView):
 
 class UploadDownload(GenericAPIView):
     queryset = Upload.objects.all()
+    serializer_class = UploadSerializer
 
     def get(self, request, pk):
         upload_instance = Upload.objects.get(pk=pk)
