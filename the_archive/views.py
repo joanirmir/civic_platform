@@ -38,7 +38,10 @@ class UploadAPI(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
-            print(serializer.validated_data)
+            tags = serializer.validated_data.get("tags")
+            split_tags = tags[0].split(",")
+            stripped_tags = [tag.strip().lower() for tag in split_tags]
+            serializer.validated_data.update({"tags": stripped_tags})
             # read logged in user
             # and set as upload__user:
             # can't be changed afterwards > readonly=True

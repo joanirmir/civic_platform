@@ -29,8 +29,8 @@ class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     # use custom serializer field
     file = FileUploadField()
-
     tags = TagListSerializerField()
+
     class Meta:
         model = Upload
         fields = "__all__"
