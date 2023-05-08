@@ -10,8 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
-from .models import Upload, Location, Link
-from .serializers import UploadSerializer
+from .models import Upload, Location, Link, Tag
+from .serializers import UploadSerializer #TagSerializer
 
 
 # set limits for number of response elements
@@ -33,11 +33,12 @@ class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [IsAuthenticated]
+#    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadSerializer(data=request.data)
         if serializer.is_valid():
+            print(serializer.validated_data)
             # read logged in user
             # and set as upload__user:
             # can't be changed afterwards > readonly=True
@@ -116,3 +117,21 @@ class UploadModifyApi(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# class TagAPI(CreateAPIView):
+#     queryset = Tag.objects.all()
+#     serializer_class = TagSerializer
+# #    parser_classes = (MultiPartParser, FormParser)
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = TagSerializer(data=request.data)
+#         if serializer.is_valid():
+#             print(request.data)          
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+

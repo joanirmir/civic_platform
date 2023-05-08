@@ -1,9 +1,10 @@
 # import python libraries
 import magic
-
+#import uuid
 # import django models/libraries
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 # from django.contrib.auth.models import User
 from django.contrib.gis.db import models as gis_models
@@ -53,7 +54,7 @@ class Upload(models.Model):
     file = models.FileField(upload_to="uploads/", null=True)
     media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
-    tags = models.ManyToManyField("Tag", related_name="uploads_tags")
+    tags = TaggableManager() 
     # by default the upload is not visible for the community,
     # set to "published", to make upload available to everyone
     status = models.CharField(max_length=16, choices=pub_options, default="draft")
@@ -83,18 +84,29 @@ class Comment(models.Model):
 class Bookmark(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
-    tags = models.ManyToManyField("Tag")
+    tags = TaggableManager()  
     link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
 
+# old attempt tag not working
 
 class Tag(models.Model):
-    name = models.CharField(max_length=200, null=True)
+    #id = models.IntegerField(primary_key=True, editable=False)
+    tags = models.CharField(max_length=200, null=True)
 
     def __str__(self):
-        return f"{self.id}: {self.name}"
+        return f"{self.id}: {self.tags}"
+
+
+# class Tags(models.Model):
+#     id = models.IntegerField(primary_key=True, editable=False)
+#     name = models.CharField(max_length=200, null=True)
+
+#     def __str__(self):
+#         return f"{self.id}: {self.name}"
+
 
 
 class Link(models.Model):
