@@ -99,10 +99,6 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
         ordering = ["created"]
 
-    def to_representation(self, instance):
-        print(instance)
-        return super().to_representation(instance)
-    
 
 class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
