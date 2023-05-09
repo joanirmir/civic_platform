@@ -24,14 +24,15 @@ CATEGORY = (
 )
 
 
-class UploadSerializer(serializers.ModelSerializer):
+class UploadPostSerializer(serializers.ModelSerializer):
     # user is logged in user
     # readonly=True, because upload user is unique
     # PrimaryKeyRelatedField takes user instance
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    location = serializers.CharField(max_length=50)
+    location = serializers.CharField(max_length=200)
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
+    
     link = serializers.CharField(max_length=250)
     # use custom serializer field
     file = FileUploadField()
@@ -42,20 +43,21 @@ class UploadSerializer(serializers.ModelSerializer):
         # exclude = ["user"]
         ordering = ["created"]
 
-    def create(self, validated_data):
+    def save(self, **kwargs):
         # breakpoint()
         # Getting the exact location and saving it to a Location object and saving the Upload object
         # Get the city string, zip_code and address from the validated data
-
+        validated_data = self.validated_data
         city = validated_data.get("location")
         zip_code = validated_data.get("zip_code")
+        #print(validated_data)
         address = validated_data.get("address")
 
         # Look up the coordinates
         latitude, longitude = Location.get_coordinates_from_city(
             f"{address} {zip_code} {city}"
         )
-
+        
         # Create a GEOSPoint object for the city coordinates
         coordinates = GEOSPoint(latitude, longitude)
         # breakpoint()
@@ -66,11 +68,12 @@ class UploadSerializer(serializers.ModelSerializer):
             address=address,
             coordinates=coordinates,
         )
+        
         # Replace the validated_data with the new created Location field
         validated_data["location"] = location
 
         # Delete zip_code and address from the validated data to create Upload object
-
+        
         del validated_data["zip_code"]
 
         if validated_data.get("address"):
@@ -81,29 +84,29 @@ class UploadSerializer(serializers.ModelSerializer):
 
         link_data = validated_data.get("link")
 
-        print(validated_data)
-        print("++++++++++++")
-        # breakpoint()
+      
+        
         # Check if the link is valid and save it as a Link object
         valid_link = is_valid_url(link_data)
         if valid_link.status_code == status.HTTP_200_OK:
             link, _ = Link.objects.get_or_create(url=link_data)
-            print(link)
             validated_data["link"] = link
-
+            
         else:
             error_data = {"error": "The URL you entered is not valid."}
             return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
 
         # Create Upload object
-        # breakpoint()
-        upload_instance = super().create(validated_data)
-        upload_instance.zip_code = None
-        # upload_instance.address = None
-        # upload_instance.link = None
-        # Replacing the zip_code and address from the Upload object with None so it won't ask for it later
-        # breakpoint()
-        print(upload_instance.__class__)
+        #breakpoint()
+        print(validated_data)
+        upload_instance = UploadSerializer(data=validated_data)
+        if upload_instance.is_valid():
+            upload_instance.save()
+        print(upload_instance)
+        #super().create(validated_data)
+        #upload_instance.zip_code = None
+        
+       
 
         # upload_instance.save()
 
@@ -111,3 +114,19 @@ class UploadSerializer(serializers.ModelSerializer):
 
         # return Response(serializer.data, status=status.HTTP_201_CREATED)
         return upload_instance
+    
+    
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        ordering = ["created"]
+
+class UploadSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    location = LocationSerializer()
+    class Meta:
+        model = Upload
+        fields = "__all__"
+        ordering = ["created"]
+
