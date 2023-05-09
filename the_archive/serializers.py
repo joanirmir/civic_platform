@@ -2,10 +2,13 @@
 from django.contrib.auth.models import User
 
 # import DRF models/libraries
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.response import Response
 
 # import project/app stuff
 from common.utils import FileUploadField
+from common.utils.check_url_status import is_valid_url
+
 from .models import Location, Upload, Comment, Bookmark, Tag, Link
 
 from geolocation.models import Location
@@ -29,8 +32,7 @@ class UploadSerializer(serializers.ModelSerializer):
     location = serializers.CharField(max_length=50)
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
-    # source="location.zip_code"
-    # source="location.zip_code"
+    link = serializers.CharField(max_length=250)
     # use custom serializer field
     file = FileUploadField()
 
@@ -41,7 +43,10 @@ class UploadSerializer(serializers.ModelSerializer):
         ordering = ["created"]
 
     def create(self, validated_data):
-        # Get the city string and zip_code from the validated data
+        # breakpoint()
+        # Getting the exact location and saving it to a Location object and saving the Upload object
+        # Get the city string, zip_code and address from the validated data
+
         city = validated_data.get("location")
         zip_code = validated_data.get("zip_code")
         address = validated_data.get("address")
@@ -53,21 +58,56 @@ class UploadSerializer(serializers.ModelSerializer):
 
         # Create a GEOSPoint object for the city coordinates
         coordinates = GEOSPoint(latitude, longitude)
-
-        # Create a Location object for the city
+        # breakpoint()
+        # Create a Location object for the location
         location, _ = Location.objects.get_or_create(
-            city=city, zip_code=zip_code, coordinates=coordinates, address=address
+            city=city,
+            zip_code=zip_code,
+            address=address,
+            coordinates=coordinates,
         )
-
+        # Replace the validated_data with the new created Location field
         validated_data["location"] = location
 
-        del validated_data["zip_code"]
-        del validated_data["address"]
-        # validated_data.pop("zip_code", None)
+        # Delete zip_code and address from the validated data to create Upload object
 
+        del validated_data["zip_code"]
+
+        if validated_data.get("address"):
+            del validated_data["address"]
+
+        # Checking the url validation
+        # Get the link data
+
+        link_data = validated_data.get("link")
+
+        print(validated_data)
+        print("++++++++++++")
+        # breakpoint()
+        # Check if the link is valid and save it as a Link object
+        valid_link = is_valid_url(link_data)
+        if valid_link.status_code == status.HTTP_200_OK:
+            link, _ = Link.objects.get_or_create(url=link_data)
+            print(link)
+            validated_data["link"] = link
+
+        else:
+            error_data = {"error": "The URL you entered is not valid."}
+            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create Upload object
+        # breakpoint()
         upload_instance = super().create(validated_data)
         upload_instance.zip_code = None
-        upload_instance.address = None
-        upload_instance.save()
+        # upload_instance.address = None
+        # upload_instance.link = None
+        # Replacing the zip_code and address from the Upload object with None so it won't ask for it later
+        # breakpoint()
+        print(upload_instance.__class__)
 
+        # upload_instance.save()
+
+        # serializer = self.__class__(instance=upload_instance)
+
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
         return upload_instance
