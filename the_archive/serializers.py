@@ -97,12 +97,12 @@ class UploadPostSerializer(serializers.ModelSerializer):
             return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
 
         # Create Upload object
-        #breakpoint()
-        print(validated_data)
+        
+        
         upload_instance = UploadSerializer(data=validated_data)
         if upload_instance.is_valid():
             upload_instance.save()
-        print(upload_instance)
+        
         #super().create(validated_data)
         #upload_instance.zip_code = None
         
@@ -115,12 +115,17 @@ class UploadPostSerializer(serializers.ModelSerializer):
         # return Response(serializer.data, status=status.HTTP_201_CREATED)
         return upload_instance
     
-    
+
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = "__all__"
         ordering = ["created"]
+
+    def to_representation(self, instance):
+        print(instance)
+        return super().to_representation(instance)
+    
 
 class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
