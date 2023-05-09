@@ -32,7 +32,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
     location = serializers.CharField(max_length=200)
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
-    
+    media_type = serializers.CharField(read_only=True)
     link = serializers.CharField(max_length=250)
     # use custom serializer field
     file = FileUploadField()
@@ -60,7 +60,6 @@ class UploadPostSerializer(serializers.ModelSerializer):
         
         # Create a GEOSPoint object for the city coordinates
         coordinates = GEOSPoint(latitude, longitude)
-        # breakpoint()
         # Create a Location object for the location
         location, _ = Location.objects.get_or_create(
             city=city,
@@ -68,51 +67,29 @@ class UploadPostSerializer(serializers.ModelSerializer):
             address=address,
             coordinates=coordinates,
         )
-        
         # Replace the validated_data with the new created Location field
         validated_data["location"] = location
 
         # Delete zip_code and address from the validated data to create Upload object
-        
         del validated_data["zip_code"]
-
         if validated_data.get("address"):
             del validated_data["address"]
 
         # Checking the url validation
         # Get the link data
-
         link_data = validated_data.get("link")
-
-      
-        
         # Check if the link is valid and save it as a Link object
         valid_link = is_valid_url(link_data)
         if valid_link.status_code == status.HTTP_200_OK:
             link, _ = Link.objects.get_or_create(url=link_data)
             validated_data["link"] = link
-            
         else:
             error_data = {"error": "The URL you entered is not valid."}
             return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
 
         # Create Upload object
-        #breakpoint()
-        print(validated_data)
-        upload_instance = UploadSerializer(data=validated_data)
-        if upload_instance.is_valid():
-            upload_instance.save()
-        print(upload_instance)
-        #super().create(validated_data)
-        #upload_instance.zip_code = None
-        
-       
+        upload_instance = super().create(validated_data)
 
-        # upload_instance.save()
-
-        # serializer = self.__class__(instance=upload_instance)
-
-        # return Response(serializer.data, status=status.HTTP_201_CREATED)
         return upload_instance
     
     

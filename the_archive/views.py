@@ -45,22 +45,18 @@ class UploadAPI(CreateAPIView):
         if serializer.is_valid():
             # read logged in user and set as upload__user:
             # can't be changed afterwards > readonly=True
-            
             serializer.validated_data.update({"user": request.user})
             
             file_path, category = write_file(request.FILES.get("file"))
             serializer.validated_data.update({"file": file_path})
-            
             serializer.validated_data.update({"media_type": category})
-            
             instance = serializer.save()
             
             # UploadPostSerializer is only for input
             # for Response create instance of UpolaodSerialzer instead
+            serialized_instance = UploadSerializer(instance)
             
-            #serialized_instance = UploadSerializer(instance)
-            
-            return Response(instance.data, status=status.HTTP_201_CREATED)
+            return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
