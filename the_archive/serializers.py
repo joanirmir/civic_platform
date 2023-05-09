@@ -92,12 +92,17 @@ class UploadPostSerializer(serializers.ModelSerializer):
 
         return upload_instance
     
-    
+
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = "__all__"
         ordering = ["created"]
+
+    def to_representation(self, instance):
+        print(instance)
+        return super().to_representation(instance)
+    
 
 class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
