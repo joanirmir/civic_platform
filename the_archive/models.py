@@ -8,15 +8,7 @@ from django.contrib.gis.db import models as gis_models
 
 # import project models
 from users.models import CustomUser
-
-
-class Location(models.Model):
-    city = models.CharField(max_length=200, null=True)
-    zip_code = models.IntegerField(null=True)
-    coordinates = gis_models.PointField(null=True)
-
-    def __str__(self):
-        return f"{self.id}: {self.city}"
+from geolocation.models import Location
 
 
 # custom Model manager
@@ -39,7 +31,7 @@ class Upload(models.Model):
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
-    location = models.CharField(max_length=100, null=True)
+    location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
     media_type = models.CharField(max_length=10, blank=True)

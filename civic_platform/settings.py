@@ -46,11 +46,13 @@ INSTALLED_APPS = [
     "django_extensions",
     # plugins
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     # apps
     "users.apps.UsersConfig",
     "the_archive.apps.TheArchiveConfig",
+    "geolocation.apps.GeolocationConfig"
 ]
 
 MIDDLEWARE = [
@@ -165,9 +167,9 @@ REST_FRAMEWORK = {
     # 'COMPONENT_SPLIT_REQUEST': True,
     # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
+        #"rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }

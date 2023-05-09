@@ -10,13 +10,17 @@ from rest_framework import status
 from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
 from .models import Upload, Location, Link
 from .serializers import UploadSerializer, UploadPostSerializer
 from common.utils import write_file
+# import for TokenAuthentication
+# from rest_framework.authentication import TokenAuthentication
+# from .permission import IsAdminOrReadOnly
+
 
 # set limits for number of response elements
 class PaginatedProducts(LimitOffsetPagination):
@@ -31,6 +35,7 @@ class UploadListAPI(ListAPIView):
     queryset = Upload.uploadobjects.all()
     # queryset = Upload.objects.all()
     serializer_class = UploadSerializer
+    # permission_classes = [IsAdminOrReadOnly, ]
 
 
 class UploadAPI(CreateAPIView):

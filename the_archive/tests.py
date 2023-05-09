@@ -1,14 +1,23 @@
+
+from users.models import CustomUser as User
+
 import json
 import os
 import io
 
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from .models import Upload, Tag
+from rest_framework.test import APITestCase
+from rest_framework import status
+
+from .models import Upload, Tag,Location
 from users.models import CustomUser
+from .serializers import UploadSerializer
+
 
 # https://testdriven.io/blog/django-custom-user-model/
 class UploadApiTests(TestCase):
@@ -30,7 +39,9 @@ class UploadApiTests(TestCase):
             "title": title, 
             "media_type": media_type, 
             "tags": tag.id, 
-            "file": file
+            "file": file,
+            "location": "Berlin",
+            "zip_code": 13357
         }
 
         return data 
@@ -144,3 +155,40 @@ class UploadApiTests(TestCase):
         )
         self.assertEqual(404, check_if_deleted.status_code)
         self.assertFalse(os.path.isfile(upload_file))
+
+
+class UploadSerializerTest(APITestCase):
+    def create_user(self):
+        user = CustomUser.objects.create_user(
+            email="normal@user.com", username="Testuser", password="foo"
+        )
+
+        return user
+
+    def test_create(self):
+        # create a test user
+        user = self.create_user()
+        #user = User.objects.create_user(username="testuser", password="testpass123")
+        self.client.force_login(user)
+
+        # create test file
+        file = SimpleUploadedFile("test_file.txt", b"file_content")
+
+        # create a tag
+        tag = Tag.objects.create(name="test")
+
+        # make a POST request to the API to create a new upload
+        response = self.client.post(
+            reverse("upload"),
+            {
+                "location": "Test City",
+                "title": "Test",
+                "media_type": "document",
+                "zip_code": 12345,
+                "file": file,
+                "tags": [tag.pk],
+            },
+            format="multipart",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
