@@ -42,7 +42,7 @@ class Upload(models.Model):
     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True)
     date_uploaded = models.DateTimeField(auto_now_add=True, null=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
-    file = models.FileField(upload_to="uploads/", null=True)
+    file = models.CharField(max_length=250, null=True)
     media_type = models.CharField(max_length=10, choices=category)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
     tags = models.ManyToManyField("Tag", related_name="uploads_tags")

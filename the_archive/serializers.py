@@ -33,7 +33,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
     media_type = serializers.CharField(read_only=True)
-    link = serializers.CharField(max_length=1000)
+    link = serializers.CharField(max_length=250)
     # use custom serializer field
     file = FileUploadField()
 
@@ -47,9 +47,12 @@ class UploadPostSerializer(serializers.ModelSerializer):
         # Getting the exact location and saving it to a Location object and saving the Upload object
         # Get the city string, zip_code and address(optional) from the validated data
         validated_data = self.validated_data
-        city = validated_data.get("location")
+        city = validated_data.get("location").title()
         zip_code = validated_data.get("zip_code")
-        address = validated_data.get("address")
+        if validated_data.get("address"):
+            address = validated_data.get("address")
+        else:
+            address = ""
 
         # Look up the coordinates
         latitude, longitude = Location.get_coordinates_from_city(
@@ -78,13 +81,18 @@ class UploadPostSerializer(serializers.ModelSerializer):
         link_data = validated_data.get("link")
         # Check if the link is valid and save it as a Link object
         valid_link = is_valid_url(link_data)
+        #breakpoint()
         if valid_link.status_code == status.HTTP_200_OK:
             link, _ = Link.objects.get_or_create(url=link_data)
             validated_data["link"] = link
         else:
-            error_data = {"error": "The URL you entered is not valid."}
-            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
-
+            raise serializers.ValidationError(
+                {
+                    "status": status.HTTP_400_BAD_REQUEST,
+                    "message": "The URL you entered is not valid."
+                }
+            )
+            
         # Create Upload object
         upload_instance = super().create(validated_data)
 
