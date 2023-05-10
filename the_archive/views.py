@@ -1,5 +1,9 @@
+import os
+import magic
+
 # import django models/libraries
 from django.shortcuts import render, get_object_or_404
+from django.http import FileResponse
 
 # import DRF models/libraries
 from rest_framework import status
@@ -67,7 +71,6 @@ class UploadModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
-
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
 
@@ -101,11 +104,10 @@ class UploadModifyApi(GenericAPIView):
 
     def patch(self, request, pk, format=None):
         """
-        Use patch instead of update. Using patch doesn't require fields.
+        Use patch instead of put. Using patch doesn't require fields.
         Only changed values have to be passed.
         """
         upload_instance = get_object_or_404(Upload, pk=pk)
-
         # check if request tries to change unmodifiable upload user
         if (
             request.data.get("user")
@@ -129,7 +131,27 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         try:
-            upload.delete()
+            #os.remove(upload_instance.file)
+            upload_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+class UploadDownload(GenericAPIView):
+    queryset = Upload.objects.all()
+    serializer_class = UploadSerializer
+
+    def get(self, request, pk):
+        upload_instance = Upload.objects.get(pk=pk)
+        upload_file = open(upload_instance.file, "rb")
+
+        mime = magic.Magic(mime=True)
+        py_magic = mime.from_file(upload_instance.file)
+
+        filename = os.path.basename(upload_instance.file)
+
+        response = FileResponse(upload_file, content_type=f"{py_magic}")
+        response['Content-Length'] = f"{os.path.getsize(upload_instance.file)}"
+        response['Content-Disposition'] = f"attachment; filename={filename}"
+
+        return response
