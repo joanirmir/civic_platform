@@ -18,10 +18,30 @@ from taggit.serializers import (TagListSerializerField,
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
-from .models import Location, Upload, Comment, Bookmark, Tag, Link
+from .models import Location, Upload, Comment, Bookmark, Link
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
+
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = "__all__"
+        ordering = ["created"]
+
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        ordering = ["created"]
+
+class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
+    search_tag = serializers.CharField()
+
+    class Meta:
+        model = Upload
+        fields = ["search_tag"]
 
 
 class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -100,28 +120,11 @@ class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
         return upload_instance
 
 
-class UploadSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
-class LinkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Link
-        fields = "__all__"
-        ordering = ["created"]
-
-
-class LocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Location
-        fields = "__all__"
-        ordering = ["created"]
-
-
-class UploadSerializer(serializers.ModelSerializer):
+class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
     link = LinkSerializer()
-
+    tags = TagListSerializerField()
 
     class Meta:
         model = Upload
@@ -136,9 +139,3 @@ class UploadSerializer(serializers.ModelSerializer):
 #         return data.values_list('name', flat=True)
 
 
-class TagListSerializer(TaggitSerializer, serializers.ModelSerializer):
-    search_tag = serializers.CharField()
-
-    class Meta:
-        model = Upload
-        fields = ["search_tag"]

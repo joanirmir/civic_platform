@@ -18,7 +18,7 @@ from taggit.serializers import TaggitSerializer
 
 # import app models
 from .models import Upload, Location, Link
-from .serializers import UploadSerializer, UploadPostSerializer, TagListSerializer
+from .serializers import (UploadSerializer, UploadPostSerializer, TagSearchSerializer)
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -180,15 +180,15 @@ class UploadDownload(GenericAPIView):
 
 
 class TagListAPI(GenericAPIView):
-    # queryset = Tag.objects.all()
-    # queryset = Upload.objects.all()
-    serializer_class = TagListSerializer
+    serializer_class = TagSearchSerializer
 
     def post(self, request, *args, **kwargs):
+        # create a list of search terms
         raw_tags = request.data.get("search_tag").split(",")
         search_tag = [tag.strip().lower() for tag in raw_tags]
+
+        # and make a django query to the db, to search for the list of search terms
         uploads = Upload.objects.filter(tags__name__in=search_tag)
-        serializer = UploadSerializer(uploads)
-        print(serializer)
-        print(serializer.data)
-        return Response(serializer.data)
+        serializers = UploadSerializer(uploads, many=True)
+
+        return Response(serializers.data)
