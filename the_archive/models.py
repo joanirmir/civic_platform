@@ -87,7 +87,7 @@ class Tag(models.Model):
 
 
 class Link(models.Model):
-    url = models.URLField(null=True)
+    url = models.URLField()
     description = models.CharField(max_length=255)
 
     def __str__(self):
