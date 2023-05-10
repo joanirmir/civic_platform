@@ -33,7 +33,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
     media_type = serializers.CharField(read_only=True)
-    link = serializers.CharField(max_length=250)
+    link = serializers.CharField(max_length=1000)
     # use custom serializer field
     file = FileUploadField()
 
@@ -44,20 +44,18 @@ class UploadPostSerializer(serializers.ModelSerializer):
         ordering = ["created"]
 
     def save(self, **kwargs):
-        # breakpoint()
         # Getting the exact location and saving it to a Location object and saving the Upload object
-        # Get the city string, zip_code and address from the validated data
+        # Get the city string, zip_code and address(optional) from the validated data
         validated_data = self.validated_data
         city = validated_data.get("location")
         zip_code = validated_data.get("zip_code")
-        #print(validated_data)
         address = validated_data.get("address")
 
         # Look up the coordinates
         latitude, longitude = Location.get_coordinates_from_city(
             f"{address} {zip_code} {city}"
         )
-        
+
         # Create a GEOSPoint object for the city coordinates
         coordinates = GEOSPoint(latitude, longitude)
         # Create a Location object for the location
@@ -91,7 +89,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
         upload_instance = super().create(validated_data)
 
         return upload_instance
-    
+
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -103,8 +101,8 @@ class LocationSerializer(serializers.ModelSerializer):
 class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
+
     class Meta:
         model = Upload
         fields = "__all__"
         ordering = ["created"]
-

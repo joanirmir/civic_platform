@@ -13,6 +13,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from .models import Upload, Location, Link
 from .serializers import UploadSerializer, UploadPostSerializer
 from common.utils import write_file
+
 # import for TokenAuthentication
 # from rest_framework.authentication import TokenAuthentication
 # from .permission import IsAdminOrReadOnly
@@ -33,6 +34,7 @@ class UploadListAPI(ListAPIView):
     serializer_class = UploadSerializer
     # permission_classes = [IsAdminOrReadOnly, ]
 
+
 class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadPostSerializer
@@ -41,24 +43,25 @@ class UploadAPI(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             # read logged in user and set as upload__user:
             # can't be changed afterwards > readonly=True
             serializer.validated_data.update({"user": request.user})
-            
+
             file_path, category = write_file(request.FILES.get("file"))
             serializer.validated_data.update({"file": file_path})
             serializer.validated_data.update({"media_type": category})
             instance = serializer.save()
-            
+
             # UploadPostSerializer is only for input
             # for Response create instance of UpolaodSerialzer instead
             serialized_instance = UploadSerializer(instance)
-            
+
             return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class UploadModifyApi(GenericAPIView):
     """
