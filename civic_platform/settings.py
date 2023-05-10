@@ -45,14 +45,15 @@ INSTALLED_APPS = [
     "django.contrib.gis", 
     "django_extensions",
     # plugins
-    "crispy_forms",
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "taggit",
     # apps
     "users.apps.UsersConfig",
     "the_archive.apps.TheArchiveConfig",
+    "geolocation.apps.GeolocationConfig"
 ]
 
 MIDDLEWARE = [
@@ -150,13 +151,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_URL = "static/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -166,9 +168,9 @@ REST_FRAMEWORK = {
     # 'COMPONENT_SPLIT_REQUEST': True,
     # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
+        #"rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
         # "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
 }
