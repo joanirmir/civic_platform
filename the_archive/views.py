@@ -9,9 +9,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 
+# import external libraries
+from taggit.serializers import TaggitSerializer
+
 # import app models
-from .models import Upload, Location, Link, Tag
-from .serializers import UploadSerializer #TagSerializer
+from .models import Upload, Location
+from .serializers import UploadSerializer, TagListSerializer
 
 
 # set limits for number of response elements
@@ -138,3 +141,16 @@ class UploadModifyApi(GenericAPIView):
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class TagListAPI(GenericAPIView):
+    # queryset = Tag.objects.all()
+    # queryset = Upload.objects.all()
+    serializer_class = TagListSerializer
+
+    def post(self, request, *args, **kwargs):
+        raw_tags = request.data.get("search_tag").split(",")
+        search_tag = [tag.strip().lower() for tag in raw_tags]
+        uploads = Upload.objects.filter(tags__name__in=search_tag)
+        serializer = UploadSerializer(uploads)
+        print(serializer)
+        print(serializer.data)
+        return Response(serializer.data)

@@ -1,25 +1,16 @@
-from taggit.serializers import (TagListSerializerField,
-                                TaggitSerializer)
-
-from rest_framework import serializers
-
 # import django models/libraries
 from django.contrib.auth.models import User
 
 # import DRF models/libraries
 from rest_framework import serializers
 
+# import external libraries
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
+
 # import project/app stuff
 from common.utils import FileUploadField
-from .models import Location, Upload, Comment, Bookmark, Link, Tag
-
-CATEGORY = (
-    ("document", "Document"),
-    ("image", "Image"),
-    ("audio", "Audio"),
-    ("video", "Video"),
-    ("other", "Other"),
-)
+from .models import Location, Upload, Comment, Bookmark
 
 
 class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -38,14 +29,6 @@ class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
         ordering = ["created"]
 
 
-
-
-
-#old attempt not working on git repro from someone
-
-
-    
-
 # class TagsSerializerField(serializers.ListField):
 #     child = serializers.CharField()
     
@@ -53,12 +36,9 @@ class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
 #         return data.values_list('name', flat=True)
 
 
+class TagListSerializer(TaggitSerializer, serializers.ModelSerializer):
+    search_tag = serializers.CharField()
 
-# class TagSerializer(TaggitSerializer, serializers.ModelSerializer):
-
-#     tags = TagListSerializerField()
-
-#     class Meta:
-#         model = Tag
-#         fields = '__all__'
-
+    class Meta:
+        model = Upload
+        fields = ["search_tag"]

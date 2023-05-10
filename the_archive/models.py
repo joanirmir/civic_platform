@@ -92,23 +92,13 @@ class Bookmark(models.Model):
 
 # old attempt tag not working
 
-class Tag(models.Model):
-    #id = models.IntegerField(primary_key=True, editable=False)
-    tags = models.CharField(max_length=200, null=True)
-
-    def __str__(self):
-        return f"{self.id}: {self.tags}"
-
-
-# class Tags(models.Model):
-#     id = models.IntegerField(primary_key=True, editable=False)
+# class Tag(models.Model):
 #     name = models.CharField(max_length=200, null=True)
-
+# 
 #     def __str__(self):
-#         return f"{self.id}: {self.name}"
-
-
-
+#         return f"{self.id}: {self.tags}"
+# 
+# 
 class Link(models.Model):
     url = models.URLField(null=True)
     description = models.CharField(max_length=255)
