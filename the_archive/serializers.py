@@ -20,9 +20,6 @@ class UploadPostSerializer(serializers.ModelSerializer):
     location = serializers.CharField(max_length=50)
     zip_code = serializers.IntegerField()
     address = serializers.CharField(max_length=50, required=False)
-    # source="location.zip_code"
-    # source="location.zip_code"
-    # use custom serializer field
     file = FileUploadField(validators=[FileValidator()])
 
     class Meta:
