@@ -14,7 +14,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import external libraries
-from taggit.serializers import TaggitSerializer
+from taggit.serializers import TaggitSerializer, TagList
+from taggit.models import Tag
 
 # import app models
 from .models import Upload, Location, Link
@@ -163,21 +164,6 @@ class UploadDownload(GenericAPIView):
 
         return response
 
-# class TagAPI(CreateAPIView):
-#     queryset = Tag.objects.all()
-#     serializer_class = TagSerializer
-# #    parser_classes = (MultiPartParser, FormParser)
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = TagSerializer(data=request.data)
-#         if serializer.is_valid():
-#             print(request.data)          
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class TagListAPI(GenericAPIView):
     serializer_class = TagSearchSerializer
@@ -199,6 +185,18 @@ class TagListAPI(GenericAPIView):
 
         # and than make a full search with the remaining search terms
         uploads = Upload.objects.filter(tags__name__in=search_tags)
-        serializers.update({"search_results": UploadSerializer(uploads, many=True).data})
+        serialized = UploadSerializer(uploads, many=True).data
+        serializers.update({"search_results": serialized})
 
-        return Response(serializers)
+        return Response(serialiUploadzers)
+
+
+class TagListAPI(GenericAPIView):
+    queryset = Tag.objects.all()
+    # permission_classes = [IsAdminOrReadOnly, ]
+
+    def get(self, request, *args, **kwargs):
+        tags = Tag.objects.values()
+        tags_list = list(tags) 
+
+        return Response(tags_list)

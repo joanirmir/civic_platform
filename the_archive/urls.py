@@ -9,5 +9,6 @@ urlpatterns = [
     path("upload/", views.UploadAPI.as_view(), name="upload"),
     path("upload/<int:pk>", views.UploadModifyApi.as_view(), name="upload-mod"),
     path("upload/download/<int:pk>", views.UploadDownload.as_view(), name="upload-download"),
-    path("upload/tags/", views.TagListAPI.as_view(), name="archive-tags-list")
+    path("uploads/tags/", views.TagListAPI.as_view()),
+    path("upload/tags/search/", views.TagListAPI.as_view(), name="archive-tags-list")
 ]
