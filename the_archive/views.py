@@ -185,10 +185,20 @@ class TagListAPI(GenericAPIView):
     def post(self, request, *args, **kwargs):
         # create a list of search terms
         raw_tags = request.data.get("search_tag").split(",")
-        search_tag = [tag.strip().lower() for tag in raw_tags]
+        search_tags = [tag.strip().lower() for tag in raw_tags]
 
-        # and make a django query to the db, to search for the list of search terms
-        uploads = Upload.objects.filter(tags__name__in=search_tag)
-        serializers = UploadSerializer(uploads, many=True)
+        # first filter out search terms, that don't have a match
+        # and create a message for every search term, that doesn't have a match
+        serializers = {}
+        for tag in search_tags:
+            upload = Upload.objects.filter(tags__name__in=[tag])
 
-        return Response(serializers.data)
+            if len(upload) == 0:
+                serializers.update({f"{tag}": "No matches for this search term"})
+                search_tags.remove(tag)
+
+        # and than make a full search with the remaining search terms
+        uploads = Upload.objects.filter(tags__name__in=search_tags)
+        serializers.update({"search_results": UploadSerializer(uploads, many=True).data})
+
+        return Response(serializers)
