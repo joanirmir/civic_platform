@@ -9,6 +9,9 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+# import libraries for JWT-Tokenization
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+
 # import project/app stuff
 from .serializers import UserSerializer, UserCreateSerializer
 from .models import CustomUser
@@ -74,3 +77,10 @@ class UserApiView(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+# Obtain an access token for user
+obtain_token = obtain_jwt_token
+
+# Refresh an existing access token
+refresh_token = refresh_jwt_token

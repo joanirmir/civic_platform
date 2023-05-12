@@ -5,13 +5,19 @@ backcall==0.2.0
 backports.zoneinfo==0.2.1
 black==23.1.0
 certifi==2023.5.7
+cffi==1.15.1
 charset-normalizer==3.1.0
 click==8.1.3
 coverage==7.2.3
+cryptography==40.0.2
 decorator==5.1.1
 Django==4.1.7
+django-crispy-forms==2.0
 django-extensions==3.2.1
+django-taggit==4.0.0
 djangorestframework==3.14.0
+djangorestframework-jwt==1.11.0
+djangorestframework-simplejwt==5.2.2
 drf-spectacular==0.26.1
 drf-spectacular-sidecar==2023.4.1
 executing==1.2.0
@@ -40,6 +46,7 @@ ptyprocess==0.7.0
 pure-eval==0.2.2
 pycparser==2.21
 Pygments==2.14.0
+PyJWT==1.7.1
 pyrsistent==0.19.3
 python-dotenv==1.0.0
 python-magic==0.4.27
