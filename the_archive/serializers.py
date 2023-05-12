@@ -6,11 +6,11 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 # import project/app stuff
-
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
 from .models import Location, Upload, Comment, Bookmark, Tag, Link
+from users.models import CustomUser
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
@@ -91,9 +91,6 @@ class UploadPostSerializer(serializers.ModelSerializer):
         return upload_instance
 
 
-class UploadSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
@@ -113,8 +110,20 @@ class UploadSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     link = LinkSerializer()
 
-
     class Meta:
         model = Upload
         fields = "__all__"
         ordering = ["created"]
+
+
+class CommentPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = 
+
+    class Meta:
+        model = Comment
+        fields = "__all__"

@@ -59,7 +59,7 @@ class Upload(models.Model):
 
 
 class Comment(models.Model):
-    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    upload = models.ForeignKey(Upload, related_name="comments", on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
