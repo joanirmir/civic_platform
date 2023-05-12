@@ -165,7 +165,7 @@ class UploadDownload(GenericAPIView):
         return response
 
 
-class TagListAPI(GenericAPIView):
+class TagSearchAPI(GenericAPIView):
     serializer_class = TagSearchSerializer
 
     def post(self, request, *args, **kwargs):
@@ -188,11 +188,12 @@ class TagListAPI(GenericAPIView):
         serialized = UploadSerializer(uploads, many=True).data
         serializers.update({"search_results": serialized})
 
-        return Response(serialiUploadzers)
+        return Response(serializers)
 
 
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
+    serializer_class = TaggitSerializer()
     # permission_classes = [IsAdminOrReadOnly, ]
 
     def get(self, request, *args, **kwargs):
