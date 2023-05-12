@@ -1,4 +1,3 @@
-
 from users.models import CustomUser as User
 
 import json
@@ -14,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from .models import Upload, Tag,Location
+from .models import Upload, Tag, Location
 from users.models import CustomUser
 from .serializers import UploadSerializer
 
@@ -36,15 +35,15 @@ class UploadApiTests(TestCase):
         user = self.create_user()
 
         data = {
-            "title": title, 
-            "media_type": media_type, 
-            "tags": tag.id, 
+            "title": title,
+            "media_type": media_type,
+            "tags": tag.id,
             "file": file,
             "location": "Berlin",
-            "zip_code": 13357
+            "zip_code": 13357,
         }
 
-        return data 
+        return data
 
     def test_upload_post(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
@@ -52,15 +51,15 @@ class UploadApiTests(TestCase):
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            "/api/archive/upload/", 
-            data=data, 
-            headers={'Content-Type': 'multipart/form-data'},
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
         uploaded_file = response.data.get("file")
         file_path = os.path.dirname(os.path.realpath(uploaded_file))
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(os.path.isfile(uploaded_file))        
+        self.assertTrue(os.path.isfile(uploaded_file))
 
         folders_list = file_path.split("/")
         category = folders_list[-1]
@@ -78,9 +77,9 @@ class UploadApiTests(TestCase):
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            "/api/archive/upload/", 
-            data=data, 
-            headers={'Content-Type': 'multipart/form-data'},
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
         error_code = response.data.get("file").get("error")
@@ -90,7 +89,7 @@ class UploadApiTests(TestCase):
 
     def test_wrong_mime_type_upload(self):
         ##########################################
-        # check if wrong file extension and 
+        # check if wrong file extension and
         # mime type are mismatching
         ##########################################
         file = SimpleUploadedFile("test.jpg", b"Hallo Test", content_type="text/plain")
@@ -98,9 +97,9 @@ class UploadApiTests(TestCase):
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            "/api/archive/upload/", 
-            data=data, 
-            headers={'Content-Type': 'multipart/form-data'},
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
         error_code = response.data.get("file").get("error")
@@ -108,24 +107,23 @@ class UploadApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(expected_error_code, error_code)
 
-
     def test_upload_put(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            "/api/archive/upload/", 
-            data=data, 
-            headers={'Content-Type': 'multipart/form-data'},
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
         patch_data = {"title": "Alternative title"}
 
         patch_response = self.client.patch(
-            f"/api/archive/upload/{response.data.get('id')}", 
-            data=patch_data, 
-            content_type="application/json"
+            f"/api/archive/upload/{response.data.get('id')}",
+            data=patch_data,
+            content_type="application/json",
         )
 
         self.assertEqual("Alternative title", patch_response.data.get("title"))
@@ -139,19 +137,17 @@ class UploadApiTests(TestCase):
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            "/api/archive/upload/", 
-            data=data, 
-            headers={'Content-Type': 'multipart/form-data'},
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
         upload_id = response.data.get("id")
         upload_file = response.data.get("file")
-        delete_response = self.client.delete(
-            f"/api/archive/upload/{upload_id}"
-        )
+        delete_response = self.client.delete(f"/api/archive/upload/{upload_id}")
 
         check_if_deleted = self.client.get(
-            "/api/archive/upload/{upload_id}", 
+            "/api/archive/upload/{upload_id}",
         )
         self.assertEqual(404, check_if_deleted.status_code)
         self.assertFalse(os.path.isfile(upload_file))
@@ -168,7 +164,7 @@ class UploadSerializerTest(APITestCase):
     def test_create(self):
         # create a test user
         user = self.create_user()
-        #user = User.objects.create_user(username="testuser", password="testpass123")
+        # user = User.objects.create_user(username="testuser", password="testpass123")
         self.client.force_login(user)
 
         # create test file

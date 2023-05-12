@@ -51,9 +51,10 @@ class Upload(models.Model):
 
     def comment_count(self):
         return self.comment_set.count()
-    
+
     def delete(self):
         import os
+
         os.remove(self.file)
         super(Upload, self).delete()
 
@@ -92,3 +93,14 @@ class Link(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.url}, {self.description}"
+
+
+class FileBookmark(models.Model):
+    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
+    note = models.TextField(null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(Tag, related_name="file_bookmarks_tags")
+
+    def __str__(self):
+        return f"{self.id}: {self.user}, {self.upload.title}, {self.note}, {self.date_added}"

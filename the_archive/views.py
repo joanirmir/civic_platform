@@ -7,15 +7,20 @@ from django.http import FileResponse
 
 # import DRF models/libraries
 from rest_framework import status
-from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    GenericAPIView,
+    CreateAPIView,
+    RetrieveAPIView,
+)
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
-from .models import Upload, Location, Link
-from .serializers import UploadSerializer, UploadPostSerializer
+from .models import Upload, Location, Link, FileBookmark
+from .serializers import UploadSerializer, UploadPostSerializer, FileBookmarkSerializer
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -71,6 +76,7 @@ class UploadModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
+
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
 
@@ -131,11 +137,12 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         try:
-            #os.remove(upload_instance.file)
+            # os.remove(upload_instance.file)
             upload_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class UploadDownload(GenericAPIView):
     queryset = Upload.objects.all()
@@ -151,7 +158,28 @@ class UploadDownload(GenericAPIView):
         filename = os.path.basename(upload_instance.file)
 
         response = FileResponse(upload_file, content_type=f"{py_magic}")
-        response['Content-Length'] = f"{os.path.getsize(upload_instance.file)}"
-        response['Content-Disposition'] = f"attachment; filename={filename}"
+        response["Content-Length"] = f"{os.path.getsize(upload_instance.file)}"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
 
         return response
+
+
+class FileBookmarkCreate(CreateAPIView):
+    serializer_class = FileBookmarkSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data["user"] = request.user
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FileBookmarkDetail(GenericAPIView):
+    serializer_class = FileBookmarkSerializer
+
+    def get(self, request, pk):
+        bookmark = get_object_or_404(FileBookmark, pk=pk)
+        serializer = self.get_serializer(bookmark)
+        return Response(serializer.data)

@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
-from .models import Location, Upload, Comment, Bookmark, Tag, Link
+from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
@@ -27,7 +27,6 @@ class UploadPostSerializer(serializers.ModelSerializer):
     media_type = serializers.CharField(read_only=True)
     file = FileUploadField(validators=[FileValidator()])
     link = serializers.CharField(max_length=250)
-    
 
     class Meta:
         model = Upload
@@ -73,7 +72,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
         link_data = validated_data.get("link")
         # Check if the link is valid and save it as a Link object
         valid_link = is_valid_url(link_data)
-        #breakpoint()
+        # breakpoint()
         if valid_link.status_code == status.HTTP_200_OK:
             link, _ = Link.objects.get_or_create(url=link_data)
             validated_data["link"] = link
@@ -81,10 +80,10 @@ class UploadPostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "status": status.HTTP_400_BAD_REQUEST,
-                    "message": "The URL you entered is not valid."
+                    "message": "The URL you entered is not valid.",
                 }
             )
-            
+
         # Create Upload object
         upload_instance = super().create(validated_data)
 
@@ -93,6 +92,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
 
 class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
+
 
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -113,8 +113,17 @@ class UploadSerializer(serializers.ModelSerializer):
     location = LocationSerializer()
     link = LinkSerializer()
 
-
     class Meta:
         model = Upload
+        fields = "__all__"
+        ordering = ["created"]
+
+
+class FileBookmarkSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    file = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = FileBookmark
         fields = "__all__"
         ordering = ["created"]
