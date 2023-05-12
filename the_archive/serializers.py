@@ -11,6 +11,7 @@ from common.utils.check_url_status import is_valid_url
 
 from .models import Location, Upload, Comment, Bookmark, Tag, Link
 from users.models import CustomUser
+from users.serializers import UserSerializer
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
@@ -109,6 +110,7 @@ class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
     link = LinkSerializer()
+    comment = Upload.comments.all()
 
     class Meta:
         model = Upload
@@ -117,12 +119,16 @@ class UploadSerializer(serializers.ModelSerializer):
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
+    #author = serializers.PrimaryKeyRelatedField(read_only=True) 
+
     class Meta:
         model = Comment
-        fields = "__all__"
+        exclude =  ["author"]
+        # fields = "__all__"
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = 
+    author = UserSerializer() 
+    upload = UploadSerializer()
 
     class Meta:
         model = Comment

@@ -15,7 +15,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 # import app models
 from .models import Upload, Location, Link, Comment
-from .serializers import UploadSerializer, UploadPostSerializer, CommentPostSerializer
+from .serializers import UploadSerializer, UploadPostSerializer, CommentPostSerializer, CommentSerializer
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -177,7 +177,7 @@ class CommentCreateApi(CreateAPIView):
 
             # UploadPostSerializer is only for input
             # for Response create instance of UpolaodSerialzer instead
-            serialized_instance = CommentPostSerializer(instance)
+            serialized_instance = CommentSerializer(instance)
 
             return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
         else:
