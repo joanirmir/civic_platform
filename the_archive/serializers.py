@@ -91,9 +91,6 @@ class UploadPostSerializer(serializers.ModelSerializer):
         return upload_instance
 
 
-class UploadSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
@@ -112,7 +109,6 @@ class UploadSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
     link = LinkSerializer()
-
 
     class Meta:
         model = Upload
