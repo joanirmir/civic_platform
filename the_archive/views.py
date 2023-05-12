@@ -18,9 +18,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 
+# import external libraries
+from taggit.serializers import TaggitSerializer, TagList
+from taggit.models import Tag
+
 # import app models
 from .models import Upload, Location, Link, FileBookmark, Comment
-from .serializers import UploadSerializer, UploadPostSerializer, FileBookmarkSerializer, CommentPostSerializer, CommentSerializer
+from .serializers import (UploadSerializer, UploadPostSerializer, FileBookmarkSerializer, TagSearchSerializer, CommentPostSerializer, CommentSerializer)
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -48,12 +52,16 @@ class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
-    # permission_classes = [IsAuthenticated]
+#    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
 
         if serializer.is_valid():
+            tags = serializer.validated_data.get("tags")
+            split_tags = tags[0].split(",")
+            stripped_tags = [tag.strip().lower() for tag in split_tags]
+            serializer.validated_data.update({"tags": stripped_tags})
             # read logged in user and set as upload__user:
             # can't be changed afterwards > readonly=True
             serializer.validated_data.update({"user": request.user})
@@ -162,6 +170,44 @@ class UploadDownload(GenericAPIView):
         response["Content-Disposition"] = f"attachment; filename={filename}"
 
         return response
+
+
+class TagSearchAPI(GenericAPIView):
+    serializer_class = TagSearchSerializer
+
+    def post(self, request, *args, **kwargs):
+        # create a list of search terms
+        raw_tags = request.data.get("search_tag").split(",")
+        search_tags = [tag.strip().lower() for tag in raw_tags]
+
+        # first filter out search terms, that don't have a match
+        # and create a message for every search term, that doesn't have a match
+        serializers = {}
+        for tag in search_tags:
+            upload = Upload.objects.filter(tags__name__in=[tag])
+
+            if len(upload) == 0:
+                serializers.update({f"{tag}": "No matches for this search term"})
+                search_tags.remove(tag)
+
+        # and than make a full search with the remaining search terms
+        uploads = Upload.objects.filter(tags__name__in=search_tags)
+        serialized = UploadSerializer(uploads, many=True).data
+        serializers.update({"search_results": serialized})
+
+        return Response(serializers)
+
+
+class TagListAPI(GenericAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TaggitSerializer()
+    # permission_classes = [IsAdminOrReadOnly, ]
+
+    def get(self, request, *args, **kwargs):
+        tags = Tag.objects.values()
+        tags_list = list(tags) 
+
+        return Response(tags_list)
 
 
 class FileBookmarkCreate(CreateAPIView):
