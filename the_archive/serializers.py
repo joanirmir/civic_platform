@@ -5,6 +5,14 @@ from django.contrib.auth.models import User
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
+# import external libraries
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
+
+# import external libraries
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
+
 # import project/app stuff
 
 from common.utils import FileUploadField, FileValidator
@@ -15,8 +23,28 @@ from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
 
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = "__all__"
+        ordering = ["created"]
 
-class UploadPostSerializer(serializers.ModelSerializer):
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        ordering = ["created"]
+
+class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
+    search_tag = serializers.CharField()
+
+    class Meta:
+        model = Upload
+        fields = ["search_tag"]
+
+
+class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
     # user is logged in user
     # readonly=True, because upload user is unique
     # PrimaryKeyRelatedField takes user instance
@@ -27,6 +55,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
     media_type = serializers.CharField(read_only=True)
     file = FileUploadField(validators=[FileValidator()])
     link = serializers.CharField(max_length=250)
+    tags = TagListSerializerField()
 
     class Meta:
         model = Upload
@@ -89,6 +118,19 @@ class UploadPostSerializer(serializers.ModelSerializer):
 
         return upload_instance
 
+
+class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    location = LocationSerializer()
+    link = LinkSerializer()
+    tags = TagListSerializerField()
+
+    class Meta:
+        model = Upload
+        fields = "__all__"
+        ordering = ["created"]
+
+
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Link
@@ -99,17 +141,6 @@ class LinkSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = "__all__"
-        ordering = ["created"]
-
-
-class UploadSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-    location = LocationSerializer()
-    link = LinkSerializer()
-
-    class Meta:
-        model = Upload
         fields = "__all__"
         ordering = ["created"]
 

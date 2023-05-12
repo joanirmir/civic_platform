@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "taggit",
     # apps
     "users.apps.UsersConfig",
     "the_archive.apps.TheArchiveConfig",

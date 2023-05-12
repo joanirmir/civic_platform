@@ -1,9 +1,10 @@
 # import python libraries
 import magic
-
+#import uuid
 # import django models/libraries
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 from django.contrib.gis.db import models as gis_models
 
 # import project models
@@ -36,7 +37,7 @@ class Upload(models.Model):
     date_edited = models.DateTimeField(auto_now=True, null=True)
     media_type = models.CharField(max_length=10, blank=True)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
-    tags = models.ManyToManyField("Tag", related_name="uploads_tags")
+    tags = TaggableManager() 
     # by default the upload is not visible for the community,
     # set to "published", to make upload available to everyone
     status = models.CharField(max_length=16, choices=pub_options, default="draft")
@@ -73,7 +74,7 @@ class Comment(models.Model):
 class Bookmark(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
-    tags = models.ManyToManyField("Tag")
+    tags = TaggableManager()  
     link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -84,7 +85,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=200, blank=False)
 
     def __str__(self):
-        return f"{self.id}: {self.name}"
+        return f"{self.id}: {self.tags}"
 
 
 class Link(models.Model):
