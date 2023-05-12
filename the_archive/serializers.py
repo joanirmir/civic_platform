@@ -119,13 +119,20 @@ class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
         return upload_instance
 
+class CommentSerializerForUploadSerializer(serializers.ModelSerializer):
+    author = UserSerializer() 
+
+    class Meta:
+        model = Comment
+        exclude = ["upload"]
 
 class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
     link = LinkSerializer()
     tags = TagListSerializerField()
-    #comment = Upload.comments.all()
+    #comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comments = CommentSerializerForUploadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Upload

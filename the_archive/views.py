@@ -249,9 +249,6 @@ class CommentCreateApi(CreateAPIView):
             serializer.validated_data.update({"author": request.user})
 
             instance = serializer.save()
-
-            # UploadPostSerializer is only for input
-            # for Response create instance of UpolaodSerialzer instead
             serialized_instance = CommentSerializer(instance)
 
             return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
