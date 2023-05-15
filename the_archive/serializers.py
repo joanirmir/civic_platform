@@ -37,6 +37,7 @@ class LocationSerializer(serializers.ModelSerializer):
         fields = "__all__"
         ordering = ["created"]
 
+
 class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
     search_tag = serializers.CharField()
 
@@ -119,12 +120,14 @@ class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
         return upload_instance
 
+
 class CommentSerializerForUploadSerializer(serializers.ModelSerializer):
     author = UserSerializer() 
 
     class Meta:
         model = Comment
         exclude = ["upload"]
+
 
 class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
