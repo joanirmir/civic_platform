@@ -134,7 +134,6 @@ class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     location = LocationSerializer()
     link = LinkSerializer()
     tags = TagListSerializerField()
-    #comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     comments = CommentSerializerForUploadSerializer(many=True, read_only=True)
 
     class Meta:
@@ -168,12 +167,11 @@ class FileBookmarkSerializer(serializers.ModelSerializer):
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
-    #author = serializers.PrimaryKeyRelatedField(read_only=True) 
 
     class Meta:
         model = Comment
         exclude =  ["author"]
-        # fields = "__all__"
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = UserSerializer() 
