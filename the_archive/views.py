@@ -7,15 +7,24 @@ from django.http import FileResponse
 
 # import DRF models/libraries
 from rest_framework import status
-from rest_framework.generics import ListAPIView, GenericAPIView, CreateAPIView
+from rest_framework.generics import (
+    ListAPIView,
+    GenericAPIView,
+    CreateAPIView,
+    RetrieveAPIView,
+)
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.parsers import MultiPartParser, FormParser
 
+# import external libraries
+from taggit.serializers import TaggitSerializer, TagList
+from taggit.models import Tag
+
 # import app models
-from .models import Upload, Location, Link
-from .serializers import UploadSerializer, UploadPostSerializer
+from .serializers import (UploadSerializer, UploadPostSerializer, TagSearchSerializer, FileBookmarkSerializer)
+from .models import Upload, Location, Link, FileBookmark
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -43,12 +52,16 @@ class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
-    # permission_classes = [IsAuthenticated]
+#    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
 
         if serializer.is_valid():
+            tags = serializer.validated_data.get("tags")
+            split_tags = tags[0].split(",")
+            stripped_tags = [tag.strip().lower() for tag in split_tags]
+            serializer.validated_data.update({"tags": stripped_tags})
             # read logged in user and set as upload__user:
             # can't be changed afterwards > readonly=True
             serializer.validated_data.update({"user": request.user})
@@ -71,6 +84,7 @@ class UploadModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
+
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
 
@@ -131,11 +145,12 @@ class UploadModifyApi(GenericAPIView):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
         try:
-            #os.remove(upload_instance.file)
+            # os.remove(upload_instance.file)
             upload_instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class UploadDownload(GenericAPIView):
     queryset = Upload.objects.all()
@@ -151,7 +166,66 @@ class UploadDownload(GenericAPIView):
         filename = os.path.basename(upload_instance.file)
 
         response = FileResponse(upload_file, content_type=f"{py_magic}")
-        response['Content-Length'] = f"{os.path.getsize(upload_instance.file)}"
-        response['Content-Disposition'] = f"attachment; filename={filename}"
+        response["Content-Length"] = f"{os.path.getsize(upload_instance.file)}"
+        response["Content-Disposition"] = f"attachment; filename={filename}"
 
         return response
+
+
+class TagSearchAPI(GenericAPIView):
+    serializer_class = TagSearchSerializer
+
+    def post(self, request, *args, **kwargs):
+        # create a list of search terms
+        raw_tags = request.data.get("search_tag").split(",")
+        search_tags = [tag.strip().lower() for tag in raw_tags]
+
+        # first filter out search terms, that don't have a match
+        # and create a message for every search term, that doesn't have a match
+        serializers = {}
+        for tag in search_tags:
+            upload = Upload.objects.filter(tags__name__in=[tag])
+
+            if len(upload) == 0:
+                serializers.update({f"{tag}": "No matches for this search term"})
+                search_tags.remove(tag)
+
+        # and than make a full search with the remaining search terms
+        uploads = Upload.objects.filter(tags__name__in=search_tags)
+        serialized = UploadSerializer(uploads, many=True).data
+        serializers.update({"search_results": serialized})
+
+        return Response(serializers)
+
+
+class TagListAPI(GenericAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TaggitSerializer()
+    # permission_classes = [IsAdminOrReadOnly, ]
+
+    def get(self, request, *args, **kwargs):
+        tags = Tag.objects.values()
+        tags_list = list(tags) 
+
+        return Response(tags_list)
+
+
+class FileBookmarkCreate(CreateAPIView):
+    serializer_class = FileBookmarkSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data["user"] = request.user
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FileBookmarkDetail(GenericAPIView):
+    serializer_class = FileBookmarkSerializer
+
+    def get(self, request, pk):
+        bookmark = get_object_or_404(FileBookmark, pk=pk)
+        serializer = self.get_serializer(bookmark)
+        return Response(serializer.data)

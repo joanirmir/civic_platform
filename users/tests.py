@@ -3,6 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+
 # https://testdriven.io/blog/django-custom-user-model/
 class UsersManagersTests(TestCase):
     def test_create_user(self):

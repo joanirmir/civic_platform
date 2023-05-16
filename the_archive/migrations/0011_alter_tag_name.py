@@ -9,10 +9,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name="tag",
-            name="name",
-            field=models.CharField(default="test", max_length=200),
-            preserve_default=False,
-        ),
+        # migrations.DeleteModel(
+        #     name="Tag",
+        # ),
     ]

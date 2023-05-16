@@ -5,18 +5,46 @@ from django.contrib.auth.models import User
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
+# import external libraries
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
+
+# import external libraries
+from taggit.serializers import (TagListSerializerField,
+                                TaggitSerializer)
+
 # import project/app stuff
 
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
-from .models import Location, Upload, Comment, Bookmark, Tag, Link
+from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
 
+class LinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Link
+        fields = "__all__"
+        ordering = ["created"]
 
-class UploadPostSerializer(serializers.ModelSerializer):
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        ordering = ["created"]
+
+class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
+    search_tag = serializers.CharField()
+
+    class Meta:
+        model = Upload
+        fields = ["search_tag"]
+
+
+class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
     # user is logged in user
     # readonly=True, because upload user is unique
     # PrimaryKeyRelatedField takes user instance
@@ -27,7 +55,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
     media_type = serializers.CharField(read_only=True)
     file = FileUploadField(validators=[FileValidator()])
     link = serializers.CharField(max_length=250)
-    
+    tags = TagListSerializerField()
 
     class Meta:
         model = Upload
@@ -73,7 +101,7 @@ class UploadPostSerializer(serializers.ModelSerializer):
         link_data = validated_data.get("link")
         # Check if the link is valid and save it as a Link object
         valid_link = is_valid_url(link_data)
-        #breakpoint()
+        # breakpoint()
         if valid_link.status_code == status.HTTP_200_OK:
             link, _ = Link.objects.get_or_create(url=link_data)
             validated_data["link"] = link
@@ -81,14 +109,26 @@ class UploadPostSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {
                     "status": status.HTTP_400_BAD_REQUEST,
-                    "message": "The URL you entered is not valid."
+                    "message": "The URL you entered is not valid.",
                 }
             )
-            
+
         # Create Upload object
         upload_instance = super().create(validated_data)
 
         return upload_instance
+
+
+class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    location = LocationSerializer()
+    link = LinkSerializer()
+    tags = TagListSerializerField()
+
+    class Meta:
+        model = Upload
+        fields = "__all__"
+        ordering = ["created"]
 
 
 class LinkSerializer(serializers.ModelSerializer):
@@ -105,12 +145,11 @@ class LocationSerializer(serializers.ModelSerializer):
         ordering = ["created"]
 
 
-class UploadSerializer(serializers.ModelSerializer):
+class FileBookmarkSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    location = LocationSerializer()
-    link = LinkSerializer()
+    file = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
-        model = Upload
+        model = FileBookmark
         fields = "__all__"
         ordering = ["created"]

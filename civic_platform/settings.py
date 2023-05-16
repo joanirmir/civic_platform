@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.gis", 
+    "django.contrib.gis",
     "django_extensions",
     # plugins
     "rest_framework",
@@ -51,10 +51,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "drf_spectacular",
     "drf_spectacular_sidecar",
+    "taggit",
     # apps
     "users.apps.UsersConfig",
     "the_archive.apps.TheArchiveConfig",
-    "geolocation.apps.GeolocationConfig"
+    "geolocation.apps.GeolocationConfig",
 ]
 
 MIDDLEWARE = [
@@ -104,17 +105,17 @@ if os.getenv("GITHUB_WORKFLOW"):
 
 else:
     DATABASES = {
-        'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        #'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'DISABLE_SERVER_SIDE_CURSORS': True,
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            #'ENGINE': 'django.db.backends.postgresql',
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+            "DISABLE_SERVER_SIDE_CURSORS": True,
+        }
     }
-}
 
 
 # Password validation
@@ -153,8 +154,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = "static/"
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 FILE_UPLOAD_HANDLERS = [
     "django.core.files.uploadhandler.MemoryFileUploadHandler",
@@ -167,14 +168,16 @@ REST_FRAMEWORK = {
     #     'rest_framework.parsers.JSONParser',
     # ],
     # 'COMPONENT_SPLIT_REQUEST': True,
+
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
         "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
-        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+      
     ),
 }
 
@@ -218,14 +221,14 @@ SIMPLE_JWT = {
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'The Archive API',
-    'DESCRIPTION': 'API documentation for our app',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
-    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
-    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
-    'REDOC_DIST': 'SIDECAR',
+    "TITLE": "The Archive API",
+    "DESCRIPTION": "API documentation for our app",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
 }
 
 # Default primary key field type
@@ -233,6 +236,6 @@ SPECTACULAR_SETTINGS = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = "/"
 
-LOGIN_URL = 'login'
+LOGIN_URL = "login"
