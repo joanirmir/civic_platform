@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 # import DRF models/libraries
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
+from rest_framework.authtoken.models import Token
 
 # import project/app stuff
 from common.utils import FileUploadField
@@ -40,6 +41,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create(**validated_data)
         user.set_password(password)
         user.save()
+
+        Token.objects.create(user=user)
 
         return user
 

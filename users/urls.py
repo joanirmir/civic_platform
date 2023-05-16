@@ -13,8 +13,10 @@ from . import views
 urlpatterns = [
     # path("register/", views.RegisterUserApiView.as_view(), name="register"),
     path("register/", views.RegisterApiView.as_view(), name="register"),
-    # path("profile/<int:pk>", views.UserApiView.as_view(), name="logged-in-profile"),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("login/", views.LoginView.as_view(), name="login"),
+    #path("auth/login/", views.LoginView.as_view, name="auth_login"),
+    #path("profile/<int:pk>", views.UserAPIView.as_view(), name="logged-in-profile"),
+    path("jwt/create", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("jwt/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("jwt/verify/", TokenVerifyView.as_view(), name="token_verify"),
 ]

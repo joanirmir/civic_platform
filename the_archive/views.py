@@ -52,7 +52,7 @@ class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
-#    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)

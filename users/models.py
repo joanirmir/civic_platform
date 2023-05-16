@@ -29,6 +29,12 @@ class CustomUser(AbstractUser, PermissionsMixin):
         verbose_name = "user"
         verbose_name_plural = "users"
 
+    def get_username(self):
+        """
+        Returns the email as the username representation.
+        """
+        return self.email
+
     def get_full_name(self):
         """
         Returns the first_name plus the last_name, with a space in between.
