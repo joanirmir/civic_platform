@@ -23,8 +23,8 @@ from taggit.serializers import TaggitSerializer, TagList
 from taggit.models import Tag
 
 # import app models
-from .serializers import (UploadSerializer, UploadPostSerializer, TagSearchSerializer, FileBookmarkSerializer)
-from .models import Upload, Location, Link, FileBookmark
+from .models import Upload, Location, Link, FileBookmark, Comment
+from .serializers import (UploadSerializer, UploadPostSerializer, FileBookmarkSerializer, TagSearchSerializer, CommentPostSerializer, CommentSerializer)
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -229,3 +229,98 @@ class FileBookmarkDetail(GenericAPIView):
         bookmark = get_object_or_404(FileBookmark, pk=pk)
         serializer = self.get_serializer(bookmark)
         return Response(serializer.data)
+
+
+class FileBookmarkDetail(GenericAPIView):
+    serializer_class = FileBookmarkSerializer
+
+    def get(self, request, pk):
+        bookmark = get_object_or_404(FileBookmark, pk=pk)
+        serializer = self.get_serializer(bookmark)
+        return Response(serializer.data)
+
+    
+class CommentCreateApi(CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentPostSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = CommentPostSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # read logged in user and set as upload__user:
+            # can't be changed afterwards > readonly=True
+            upload_id = request.data.get("upload")
+            upload_instance = Upload.objects.get(pk=upload_id)
+            serializer.validated_data.update({"upload": upload_instance})
+            serializer.validated_data.update({"author": request.user})
+
+            instance = serializer.save()
+            serialized_instance = CommentSerializer(instance)
+
+            return Response(serialized_instance.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentModifyApi(GenericAPIView):
+    """
+    Read, update and delete single db entries
+    """
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated,]
+
+    warnings = {
+        "user_locked": {"warning": "Its not possible to change the comment author."},
+        "user_restricted": {"warning": "Only comment author is able to change this comment."},
+    }
+
+    def get(self, request, pk):
+        comment_instance = get_object_or_404(Comment, pk=pk)
+        serializer = CommentSerializer(comment_instance)
+        return Response(serializer.data)
+
+    def patch(self, request, pk):
+        comment_instance = get_object_or_404(Comment, pk=pk)
+        # check if request tries to change unmodifiable upload user
+        
+        if (
+            request.data.get("user")
+            and request.data.get("user") != comment_instance.user.id
+        ):
+            return Response(
+                self.warnings.get("user_locked"), status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # check if other user then comment author is trying to change this comment
+        if (request.user != comment_instance.author):
+            return Response(
+                self.warnings.get("user_restricted"), status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # pass the comment instance and the changed values to serializer
+        serializer = CommentSerializer(
+            instance=comment_instance, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        comment_instance = get_object_or_404(Comment, pk=pk)
+
+        # check if other user then comment author is trying to change this comment
+        if (request.user != comment_instance.author):
+            return Response(
+                self.warnings.get("user_restricted"), status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            comment_instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)

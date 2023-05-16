@@ -14,11 +14,12 @@ from taggit.serializers import (TagListSerializerField,
                                 TaggitSerializer)
 
 # import project/app stuff
-
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
 from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
+from users.models import CustomUser
+from users.serializers import UserSerializer
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
@@ -35,6 +36,7 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = "__all__"
         ordering = ["created"]
+
 
 class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
     search_tag = serializers.CharField()
@@ -119,11 +121,20 @@ class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
         return upload_instance
 
 
+class CommentSerializerForUploadSerializer(serializers.ModelSerializer):
+    author = UserSerializer() 
+
+    class Meta:
+        model = Comment
+        exclude = ["upload"]
+
+
 class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     location = LocationSerializer()
     link = LinkSerializer()
     tags = TagListSerializerField()
+    comments = CommentSerializerForUploadSerializer(many=True, read_only=True)
 
     class Meta:
         model = Upload
@@ -153,3 +164,19 @@ class FileBookmarkSerializer(serializers.ModelSerializer):
         model = FileBookmark
         fields = "__all__"
         ordering = ["created"]
+
+
+class CommentPostSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        exclude =  ["author"]
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = UserSerializer() 
+    upload = UploadSerializer()
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
