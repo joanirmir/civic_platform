@@ -42,7 +42,7 @@ class UploadListAPI(ListAPIView):
     # in models.py we defined a custom model manager:
     # upload objects -> UploadObjects()
     # so its possible to only list elements that have "status=published"
-    queryset = Upload.uploadobjects.all()
+    queryset = Upload.objects.all()
     # queryset = Upload.objects.all()
     serializer_class = UploadSerializer
     # permission_classes = [IsAdminOrReadOnly, ]

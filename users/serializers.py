@@ -52,13 +52,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         return password2
 
 
-# class UserSerializer(serializers.ModelSerializer):
-#     # use custom serializer field
-#     user_img = FileUploadField(required=False)
+# Define a serializer class for the response data
+# class LoginResponseSerializer(serializers.Serializer):
+#     message = serializers.CharField()
+#     token = serializers.DictField(child=serializers.CharField())
 
-#     class Meta:
-#         model = CustomUser
-#         fields = ["id", "email", "username", "first_name", "last_name", "user_img"]
+# class LoginRequestSerializer(serializers.Serializer):
+#     email = serializers.EmailField()
+#     password = serializers.CharField()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    # use custom serializer field
+    user_img = FileUploadField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ["id", "email", "username", "first_name", "last_name", "user_img"]
 
 
 # class UserCreateSerializer(serializers.ModelSerializer):
