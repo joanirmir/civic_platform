@@ -200,7 +200,7 @@ class TagSearchAPI(GenericAPIView):
 
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
-    serializer_class = TaggitSerializer()
+    serializer_class = TaggitSerializer
     # permission_classes = [IsAdminOrReadOnly, ]
 
     def get(self, request, *args, **kwargs):
@@ -231,15 +231,6 @@ class FileBookmarkDetail(GenericAPIView):
         return Response(serializer.data)
 
 
-class FileBookmarkDetail(GenericAPIView):
-    serializer_class = FileBookmarkSerializer
-
-    def get(self, request, pk):
-        bookmark = get_object_or_404(FileBookmark, pk=pk)
-        serializer = self.get_serializer(bookmark)
-        return Response(serializer.data)
-
-    
 class CommentCreateApi(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentPostSerializer

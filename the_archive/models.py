@@ -81,13 +81,6 @@ class Bookmark(models.Model):
         return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
 
 
-class Tag(models.Model):
-    name = models.CharField(max_length=200, blank=False)
-
-    def __str__(self):
-        return f"{self.id}: {self.tags}"
-
-
 class Link(models.Model):
     url = models.URLField()
     description = models.CharField(max_length=255)
@@ -101,7 +94,7 @@ class FileBookmark(models.Model):
     user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     note = models.TextField(null=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    tags = models.ManyToManyField(Tag, related_name="file_bookmarks_tags")
+    tags = TaggableManager() 
 
     def __str__(self):
         return f"{self.id}: {self.user}, {self.upload.title}, {self.note}, {self.date_added}"

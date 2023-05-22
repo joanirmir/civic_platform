@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 # import libraries for JWT-Tokenization
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+# from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 # import project/app stuff
 from .serializers import UserSerializer, UserCreateSerializer
@@ -80,7 +80,7 @@ class UserApiView(GenericAPIView):
 
 
 # Obtain an access token for user
-obtain_token = obtain_jwt_token
+# obtain_token = obtain_jwt_token
 
 # Refresh an existing access token
-refresh_token = refresh_jwt_token
+# refresh_token = refresh_jwt_token
