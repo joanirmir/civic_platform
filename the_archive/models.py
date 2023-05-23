@@ -1,6 +1,7 @@
 # import python libraries
 import magic
-#import uuid
+
+# import uuid
 # import django models/libraries
 from django.db import models
 from django.utils import timezone
@@ -29,7 +30,7 @@ class Upload(models.Model):
 
     file = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    #user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_names="uploads")
+    # user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_names="uploads")
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
@@ -38,7 +39,7 @@ class Upload(models.Model):
     date_edited = models.DateTimeField(auto_now=True, null=True)
     media_type = models.CharField(max_length=10, blank=True)
     link = models.ForeignKey("Link", null=True, on_delete=models.PROTECT)
-    tags = TaggableManager() 
+    tags = TaggableManager()
     # by default the upload is not visible for the community,
     # set to "published", to make upload available to everyone
     status = models.CharField(max_length=16, choices=pub_options, default="draft")
@@ -64,7 +65,7 @@ class Upload(models.Model):
 class Comment(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
-    #author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="comments")
+    # author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="comments")
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
@@ -76,7 +77,7 @@ class Comment(models.Model):
 class Bookmark(models.Model):
     upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
-    tags = TaggableManager()  
+    tags = TaggableManager()
     link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
 
     def __str__(self):

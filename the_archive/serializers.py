@@ -6,12 +6,10 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 # import external libraries
-from taggit.serializers import (TagListSerializerField,
-                                TaggitSerializer)
+from taggit.serializers import TagListSerializerField, TaggitSerializer
 
 # import external libraries
-from taggit.serializers import (TagListSerializerField,
-                                TaggitSerializer)
+from taggit.serializers import TagListSerializerField, TaggitSerializer
 
 # import project/app stuff
 
@@ -22,6 +20,7 @@ from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
+
 
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +34,7 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = "__all__"
         ordering = ["created"]
+
 
 class TagSearchSerializer(TaggitSerializer, serializers.ModelSerializer):
     search_tag = serializers.CharField()

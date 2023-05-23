@@ -23,7 +23,12 @@ from taggit.serializers import TaggitSerializer, TagList
 from taggit.models import Tag
 
 # import app models
-from .serializers import (UploadSerializer, UploadPostSerializer, TagSearchSerializer, FileBookmarkSerializer)
+from .serializers import (
+    UploadSerializer,
+    UploadPostSerializer,
+    TagSearchSerializer,
+    FileBookmarkSerializer,
+)
 from .models import Upload, Location, Link, FileBookmark
 from common.utils import write_file
 
@@ -53,7 +58,7 @@ class UploadAPI(CreateAPIView):
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
-    #user =self.request.user
+    # user =self.request.user
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
@@ -71,7 +76,7 @@ class UploadAPI(CreateAPIView):
             serializer.validated_data.update({"file": file_path})
             serializer.validated_data.update({"media_type": category})
             instance = serializer.save()
-            #instance = serializer.save(author=user)
+            # instance = serializer.save(author=user)
 
             # UploadPostSerializer is only for input
             # for Response create instance of UpolaodSerialzer instead
@@ -89,6 +94,7 @@ class UploadModifyApi(GenericAPIView):
 
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
+    classes = [IsAuthenticated]
 
     warnings = {
         "user_locked": {"warning": "Its not possible to change the upload user."},
@@ -157,6 +163,7 @@ class UploadModifyApi(GenericAPIView):
 class UploadDownload(GenericAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
         upload_instance = Upload.objects.get(pk=pk)
@@ -176,6 +183,7 @@ class UploadDownload(GenericAPIView):
 
 class TagSearchAPI(GenericAPIView):
     serializer_class = TagSearchSerializer
+    classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, *args, **kwargs):
         # create a list of search terms
@@ -203,17 +211,18 @@ class TagSearchAPI(GenericAPIView):
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
     serializer_class = TaggitSerializer()
-    # permission_classes = [IsAdminOrReadOnly, ]
+    classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         tags = Tag.objects.values()
-        tags_list = list(tags) 
+        tags_list = list(tags)
 
         return Response(tags_list)
 
 
 class FileBookmarkCreate(CreateAPIView):
     serializer_class = FileBookmarkSerializer
+    classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -226,6 +235,7 @@ class FileBookmarkCreate(CreateAPIView):
 
 class FileBookmarkDetail(GenericAPIView):
     serializer_class = FileBookmarkSerializer
+    classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, pk):
         bookmark = get_object_or_404(FileBookmark, pk=pk)

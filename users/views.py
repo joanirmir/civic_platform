@@ -15,7 +15,11 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 # from rest_framework.request import Request
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    IsAuthenticatedOrReadOnly,
+)
 
 # import libraries for JWT-Tokenization
 # from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
@@ -50,14 +54,11 @@ class RegisterApiView(CreateAPIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# @csrf_exempt
 class LoginView(APIView):
     permission_classes = []
     serializer_class = LoginRequestSerializer
 
     def post(self, request, *args, **kwargs):
-        # breakpoint()
-
         email = request.data.get("email")
         password = request.data.get("password")
 
@@ -92,23 +93,10 @@ class LogoutView(APIView):
         return Response("Logout was successfully.")
 
 
-# class RegisterUserApiView(CreateAPIView):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UserCreateSerializer
-
-#     def post(self, request, *args, **kwargs):
-#         serializer = UserCreateSerializer(data=request.data)
-#         if serializer.is_valid():
-#             user = serializer.save()
-#             return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
-#         else:
-#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# @login_required
 class UserApiView(GenericAPIView):
     queryset = CustomUser
     serializer_class = UserSerializer
+    classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request, pk, format=None):
         user_instance = get_object_or_404(CustomUser, pk=pk)
@@ -159,39 +147,3 @@ class UserApiView(GenericAPIView):
 
 # Refresh an existing access token
 # refresh_token = refresh_jwt_token
-
-
-# LoginView with serializer
-# class LoginView(APIView):
-
-#     def post(self, request, *args, **kwargs):
-#         breakpoint()
-#         serializer= LoginRequestSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         email=serializer.validated_data("email")
-#         password=serializer.validated_data("password")
-
-#         user=authenticate(email=email, password=password)
-
-#         if user is not None:
-
-#             tokens=create_jwt_pair_for_user(user)
-#             serializer = LoginResponseSerializer(data={
-#                 "message":"Login was successful",
-#                 "token":tokens
-#             })
-
-#             serializer.is_valid(raise_exception=True)
-#             serialized_data = serializer.validated_data
-#             return Response(data=serialized_data, status=status.HTTP_200_OK)
-#         else:
-#             return Response(data={"message":"Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
-
-
-#     def get(self, request:Request):
-#         content={
-#             "user":str(request.user),
-#             "auth":str(request.auth)
-#         }
-
-#         return Response(data=content, status=status.HTTP_200_OK)
