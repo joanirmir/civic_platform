@@ -23,10 +23,10 @@ Features
 
 |                             | Owner         | Admin         | Editor        | Viewer       |
 | -------------               | ------------- | ------------- | ------------- |------------- |
-| Upload new data record      |               |               |               |              | 
-| Delete data record          |               |               |               |              | 
-| Comment a data record       |               |               |               |              | 
-| Tag a data record           |               |               |               |              | 
-| Make a bookmark on data     |               |               |               |              | 
+| Upload new data record      |  x            |               |               |              | 
+| Delete data record          |  x            | x             |               |              | 
+| Comment a data record       | x             |               |               |x             | 
+| Tag a data record           | x             |               |               |x             | 
+| Make a bookmark on data     | x             |               |               |x             | 
 |                             |               |               |               |              | 
 
