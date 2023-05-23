@@ -22,10 +22,9 @@ class Migration(migrations.Migration):
         #     ),
         # ),
         migrations.RemoveField(
-            model_name='upload',
-            name='tags',
-            ),
-        
+            model_name="upload",
+            name="tags",
+        ),
         migrations.AddField(
             model_name="upload",
             name="tags",
@@ -37,10 +36,9 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.RemoveField(
-            model_name='bookmark',
-            name='tags',
-            ),
-        
+            model_name="bookmark",
+            name="tags",
+        ),
         migrations.AddField(
             model_name="bookmark",
             name="tags",
@@ -51,4 +49,4 @@ class Migration(migrations.Migration):
                 verbose_name="Tags",
             ),
         ),
-        ]
+    ]

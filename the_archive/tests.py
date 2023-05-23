@@ -26,6 +26,7 @@ def create_user():
 
     return user
 
+
 # https://testdriven.io/blog/django-custom-user-model/
 class UploadApiTests(TestCase):
     def create_user(self):
@@ -39,13 +40,13 @@ class UploadApiTests(TestCase):
         tags = ["Summer, Sun"]
 
         data = {
-                "location": "Bonn",
-                "title": "Test",
-                "zip_code": 53129,
-                "file": file,
-                "tags": tags,
-                "link": "https://www.zeit.de/index",
-                "status": "published",
+            "location": "Bonn",
+            "title": "Test",
+            "zip_code": 53129,
+            "file": file,
+            "tags": tags,
+            "link": "https://www.zeit.de/index",
+            "status": "published",
         }
 
         return data
@@ -175,13 +176,13 @@ class AddBookmarkTest(TestCase):
         tags = ["Summer, Sun"]
 
         data = {
-                "location": "Bonn",
-                "title": "Test",
-                "zip_code": 53129,
-                "file": file,
-                "tags": tags,
-                "link": "https://www.zeit.de/index",
-                "status": "published",
+            "location": "Bonn",
+            "title": "Test",
+            "zip_code": 53129,
+            "file": file,
+            "tags": tags,
+            "link": "https://www.zeit.de/index",
+            "status": "published",
         }
 
         return data
@@ -207,11 +208,9 @@ class AddBookmarkTest(TestCase):
         self.client.login(email="normal@user.com", password="foo")
         response_bookmark = self.client.post(
             "/api/archive/upload/bookmark/create/",
-            data = bookmark_data,
+            data=bookmark_data,
         )
 
         self.assertEqual(response_bookmark.status_code, 201)
         self.assertEqual(response_bookmark.data.get("note"), "Important")
         self.assertEqual(response_bookmark.data.get("upload"), upload_id)
-
-
