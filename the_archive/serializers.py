@@ -13,7 +13,7 @@ from taggit.serializers import (TagListSerializerField,
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
-from .models import Location, Upload, Comment, Bookmark, Link, FileBookmark
+from .models import Location, Upload, Comment, Link, FileBookmark
 from users.models import CustomUser
 from users.serializers import UserSerializer
 
@@ -154,7 +154,6 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class FileBookmarkSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    upload = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = FileBookmark

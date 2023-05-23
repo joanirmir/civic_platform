@@ -71,16 +71,6 @@ class Comment(models.Model):
         return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
 
 
-class Bookmark(models.Model):
-    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
-    author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
-    tags = TaggableManager()  
-    link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
-
-
 class Link(models.Model):
     url = models.URLField()
     description = models.CharField(max_length=255)
