@@ -27,6 +27,7 @@ Features
 | View data record            |  x            | x             |               |x             | 
 | Update data record          |  x            |               |               |              | 
 | Delete data record          |  x            | x             |               |              | 
+| Download data record        | x             |               |               | x            | 
 | Comment a data record       | x             |               |               |x             | 
 | View a comment              | x             |x              |               |x             | 
 | Update a comment            | x             |               |               |              | 
