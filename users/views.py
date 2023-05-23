@@ -1,5 +1,6 @@
 # import django models/libraries
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 
 # from .backends import CustomUserBackend
@@ -17,12 +18,17 @@ from rest_framework.request import Request
 from rest_framework.permissions import IsAuthenticated
 
 # import libraries for JWT-Tokenization
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+# from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 # import project/app stuff
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import (
+    RegisterSerializer,
+    UserSerializer,
+    LoginRequestSerializer,
+    LogoutRequestSerializer,
+)
 
-# UserCreateSerializer, LoginResponseSerializer, LoginRequestSerializer
+# UserCreateSerializer, LoginResponseSerializer,
 from .models import CustomUser
 from .tokens import create_jwt_pair_for_user
 
@@ -44,11 +50,14 @@ class RegisterApiView(CreateAPIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @csrf_exempt
 class LoginView(APIView):
     permission_classes = []
+    serializer_class = LoginRequestSerializer
 
     def post(self, request, *args, **kwargs):
         # breakpoint()
+
         email = request.data.get("email")
         password = request.data.get("password")
 
@@ -66,9 +75,21 @@ class LoginView(APIView):
             )
 
     def get(self, request: Request):
+        # breakpoint()
         content = {"user": str(request.user), "auth": str(request.auth)}
 
         return Response(data=content, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = LogoutRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.logout(request)
+        return Response("Logout was successfully.")
 
 
 # class RegisterUserApiView(CreateAPIView):
@@ -134,10 +155,10 @@ class UserApiView(GenericAPIView):
 
 
 # Obtain an access token for user
-obtain_token = obtain_jwt_token
+# obtain_token = obtain_jwt_token
 
 # Refresh an existing access token
-refresh_token = refresh_jwt_token
+# refresh_token = refresh_jwt_token
 
 
 # LoginView with serializer

@@ -45,7 +45,7 @@ class UploadListAPI(ListAPIView):
     queryset = Upload.objects.all()
     # queryset = Upload.objects.all()
     serializer_class = UploadSerializer
-    # permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class UploadAPI(CreateAPIView):
@@ -53,6 +53,7 @@ class UploadAPI(CreateAPIView):
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
+    #user =self.request.user
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
@@ -70,6 +71,7 @@ class UploadAPI(CreateAPIView):
             serializer.validated_data.update({"file": file_path})
             serializer.validated_data.update({"media_type": category})
             instance = serializer.save()
+            #instance = serializer.save(author=user)
 
             # UploadPostSerializer is only for input
             # for Response create instance of UpolaodSerialzer instead

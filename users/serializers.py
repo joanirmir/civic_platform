@@ -1,10 +1,12 @@
 # import django models/libraries
 from django.core.exceptions import ValidationError
+from django.contrib.auth import logout
 
 # import DRF models/libraries
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
 from rest_framework.authtoken.models import Token
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 # import project/app stuff
 from common.utils import FileUploadField
@@ -57,9 +59,37 @@ class RegisterSerializer(serializers.ModelSerializer):
 #     message = serializers.CharField()
 #     token = serializers.DictField(child=serializers.CharField())
 
-# class LoginRequestSerializer(serializers.Serializer):
-#     email = serializers.EmailField()
-#     password = serializers.CharField()
+
+class LoginRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            "email",
+            "username",
+        ]
+
+
+class LogoutRequestSerializer(serializers.Serializer):
+    def logout(self, request):
+        try:
+            token = Token.objects.get(user=request.user)
+            token.delete()
+        except Token.DoesNotExist:
+            pass
+
+        logout(request)
+
+    def validate(self, attrs):
+        token = attrs.get("token")
+        if token:
+            try:
+                RefreshToken(token).verify()
+            except TokenError:
+                raise serializers.ValidationError("Token has expired.")
+        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer):
