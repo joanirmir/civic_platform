@@ -15,151 +15,47 @@
     ".xls": {"mime_type": "application/vnd.ms-exel", "category": "document"},
     ".xlt": {"mime_type": "application/vnd.ms-exel", "category": "document"},
     ".xlw": {"mime_type": "application/vnd.ms-exel", "category": "document"},
-    ".xlam": {
-        "mime_type": "application/vnd.ms-excel.addin.macroenabled.12",
-        "category": "document",
-    },
-    ".xlsb": {
-        "mime_type": "application/vnd.ms-excel.sheet.binary.macroenabled.12",
-        "category": "document",
-    },
-    ".xlsm": {
-        "mime_type": "application/vnd.ms-excel.sheet.macroenabled.12",
-        "category": "document",
-    },
-    ".xltm": {
-        "mime_type": "application/vnd.ms-excel.template.macroenabled.12",
-        "category": "document",
-    },
+    ".xlam": {"mime_type": "application/vnd.ms-excel.addin.macroenabled.12", "category": "document"},
+    ".xlsb": {"mime_type": "application/vnd.ms-excel.sheet.binary.macroenabled.12", "category": "document"},
+    ".xlsm": {"mime_type": "application/vnd.ms-excel.sheet.macroenabled.12", "category": "document"}, 
+    ".xltm": {"mime_type": "application/vnd.ms-excel.template.macroenabled.12", "category": "document"},
     ".pot": {"mime_type": "application/vnd.ms-powerpoint", "category": "document"},
     ".ppa": {"mime_type": "application/vnd.ms-powerpoint", "category": "document"},
     ".pps": {"mime_type": "application/vnd.ms-powerpoint", "category": "document"},
     ".ppt": {"mime_type": "application/vnd.ms-powerpoint", "category": "document"},
     ".pwz": {"mime_type": "application/vnd.ms-powerpoint", "category": "document"},
-    ".ppam": {
-        "mime_type": "application/vnd.ms-powerpoint.addin.macroenabled.12",
-        "category": "document",
-    },
-    ".pptm": {
-        "mime_type": "application/vnd.ms-powerpoint.presentation.macroenabled.12",
-        "category": "document",
-    },
-    ".sldm": {
-        "mime_type": "application/vnd.ms-powerpoint.slide.macroenabled.12",
-        "category": "document",
-    },
-    ".ppsm": {
-        "mime_type": "application/vnd.ms-powerpoint.slideshow.macroenabled.12",
-        "category": "document",
-    },
-    ".potm": {
-        "mime_type": "application/vnd.ms-powerpoint.template.macroenabled.12",
-        "category": "document",
-    },
-    ".docm": {
-        "mime_type": "application/vnd.ms-word.document.macroenabled.12",
-        "category": "document",
-    },
-    ".dotm": {
-        "mime_type": "application/vnd.ms-word.template.macroenabled.12",
-        "category": "document",
-    },
-    ".odc": {
-        "mime_type": "application/vnd.oasis.opendocument.chart",
-        "category": "document",
-    },
-    ".otc": {
-        "mime_type": "application/vnd.oasis.opendocument.chart-template",
-        "category": "document",
-    },
-    ".odb": {
-        "mime_type": "application/vnd.oasis.opendocument.database",
-        "category": "document",
-    },
-    ".odf": {
-        "mime_type": "application/vnd.oasis.opendocument.formula",
-        "category": "document",
-    },
-    ".odtf": {
-        "mime_type": "application/vnd.oasis.opendocument.formula-template",
-        "category": "document",
-    },
-    ".odg": {
-        "mime_type": "application/vnd.oasis.opendocument.graphics",
-        "category": "document",
-    },
-    ".otg": {
-        "mime_type": "application/vnd.oasis.opendocument.graphics-template",
-        "category": "document",
-    },
-    ".odi": {
-        "mime_type": "application/vnd.oasis.opendocument.image",
-        "category": "document",
-    },
-    ".oti": {
-        "mime_type": "application/vnd.oasis.opendocument.image-template",
-        "category": "document",
-    },
-    ".odp": {
-        "mime_type": "application/vnd.oasis.opendocument.presentation",
-        "category": "document",
-    },
-    ".otp": {
-        "mime_type": "application/vnd.oasis.opendocument.presentation-template",
-        "category": "document",
-    },
-    ".ods": {
-        "mime_type": "application/vnd.oasis.opendocument.spreadsheet",
-        "category": "document",
-    },
-    ".ots": {
-        "mime_type": "application/vnd.oasis.opendocument.spreadsheet-template",
-        "category": "document",
-    },
-    ".odt": {
-        "mime_type": "application/vnd.oasis.opendocument.text",
-        "category": "document",
-    },
-    ".otm": {
-        "mime_type": "application/vnd.oasis.opendocument.text-master",
-        "category": "document",
-    },
-    ".ott": {
-        "mime_type": "application/vnd.oasis.opendocument.text-template",
-        "category": "document",
-    },
-    ".oth": {
-        "mime_type": "application/vnd.oasis.opendocument.text-web",
-        "category": "document",
-    },
-    ".pptx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        "category": "document",
-    },
-    ".sldx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.slide",
-        "category": "document",
-    },
-    ".ppsx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
-        "category": "document",
-    },
-    ".potx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.template",
-        "category": "document",
-    },
-    ".xlsx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "category": "document",
-    },
-    ".docx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "category": "document",
-    },
-    ".dotx": {
-        "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
-        "category": "document",
-    },
+    ".ppam": {"mime_type": "application/vnd.ms-powerpoint.addin.macroenabled.12", "category": "document"},
+    ".pptm": {"mime_type": "application/vnd.ms-powerpoint.presentation.macroenabled.12", "category": "document"},
+    ".sldm": {"mime_type": "application/vnd.ms-powerpoint.slide.macroenabled.12", "category": "document"},
+    ".ppsm": {"mime_type": "application/vnd.ms-powerpoint.slideshow.macroenabled.12", "category": "document"},
+    ".potm": {"mime_type": "application/vnd.ms-powerpoint.template.macroenabled.12", "category": "document"},
+    ".docm": {"mime_type": "application/vnd.ms-word.document.macroenabled.12", "category": "document"},
+    ".dotm": {"mime_type": "application/vnd.ms-word.template.macroenabled.12", "category": "document"},
+    ".odc": {"mime_type": "application/vnd.oasis.opendocument.chart", "category": "document"},
+    ".otc": {"mime_type": "application/vnd.oasis.opendocument.chart-template", "category": "document"},
+    ".odb": {"mime_type": "application/vnd.oasis.opendocument.database", "category": "document"},
+    ".odf": {"mime_type": "application/vnd.oasis.opendocument.formula", "category": "document"},
+    ".odtf": {"mime_type": "application/vnd.oasis.opendocument.formula-template", "category": "document"},
+    ".odg": {"mime_type": "application/vnd.oasis.opendocument.graphics", "category": "document"},
+    ".otg": {"mime_type": "application/vnd.oasis.opendocument.graphics-template", "category": "document"},
+    ".odi": {"mime_type": "application/vnd.oasis.opendocument.image", "category": "document"},
+    ".oti": {"mime_type": "application/vnd.oasis.opendocument.image-template", "category": "document"},
+    ".odp": {"mime_type": "application/vnd.oasis.opendocument.presentation", "category": "document"},
+    ".otp": {"mime_type": "application/vnd.oasis.opendocument.presentation-template", "category": "document"},
+    ".ods": {"mime_type": "application/vnd.oasis.opendocument.spreadsheet", "category": "document"},
+    ".ots": {"mime_type": "application/vnd.oasis.opendocument.spreadsheet-template", "category": "document"},
+    ".odt": {"mime_type": "application/vnd.oasis.opendocument.text", "category": "document"},
+    ".otm": {"mime_type": "application/vnd.oasis.opendocument.text-master", "category": "document"},
+    ".ott": {"mime_type": "application/vnd.oasis.opendocument.text-template", "category": "document"},
+    ".oth": {"mime_type": "application/vnd.oasis.opendocument.text-web", "category": "document"}, 
+    ".pptx": {"mime_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation", "category": "document"},
+    ".sldx": {"mime_type": "application/vnd.openxmlformats-officedocument.presentationml.slide", "category": "document"}, 
+    ".ppsx": {"mime_type": "application/vnd.openxmlformats-officedocument.presentationml.slideshow", "category": "document"},
+    ".potx": {"mime_type": "application/vnd.openxmlformats-officedocument.presentationml.template", "category": "document"},
+    ".xlsx": {"mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "category": "document"},
+    ".docx": {"mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "category": "document"},
+    ".dotx": {"mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.template", "category": "document"},
+
     ".db": {"mime_type": "application/vnd.sqlite3", "category": "other"},
     ".sqlite": {"mime_type": "application/vnd.sqlite3", "category": "other"},
     ".sqlite3": {"mime_type": "application/vnd.sqlite3", "category": "other"},
@@ -167,11 +63,13 @@
     "sqlite-wal": {"mime_type": "application/vnd.sqlite3", "category": "other"},
     "db-shm": {"mime_type": "application/vnd.sqlite3", "category": "other"},
     "sqlite-shm": {"mime_type": "application/vnd.sqlite3", "category": "other"},
+
     ".mp4": {"mime_type": "video/mp4", "category": "video"},
     ".mpg": {"mime_type": "video/mpeg", "category": "video"},
     ".mpeg": {"mime_type": "video/mpeg", "category": "video"},
     ".ogv": {"mime_type": "video/ogg", "category": "video"},
     ".avi": {"mime_type": "video/x-msvideo", "category": "video"},
+
     ".bmp": {"mime_type": "image/bmp", "category": "image"},
     ".gif": {"mime_type": "image/gif", "category": "image"},
     ".jpe": {"mime_type": "image/jpeg", "category": "image"},
@@ -182,10 +80,11 @@
     ".tif": {"mime_type": "image/tiff", "category": "image"},
     ".tiff": {"mime_type": "image/tiff", "category": "image"},
     ".webp": {"mime_type": "image/webp", "category": "image"},
+
     ".flac": {"mime_type": "audio/flac", "category": "audio"},
     ".mp4a": {"mime_type": "audio/mp4", "category": "audio"},
     ".mp3": {"mime_type": ["audio/mpeg", "audio/mp3"], "category": "audio"},
     ".ogg": {"mime_type": "audio/ogg", "category": "audio"},
     ".wav": {"mime_type": "audio/wav", "category": "audio"},
-    ".aac": {"mime_type": "audio/x-aac", "category": "audio"},
+    ".aac": {"mime_type": "audio/x-aac", "category": "audio"}
 }
