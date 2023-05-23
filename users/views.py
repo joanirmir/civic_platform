@@ -36,6 +36,8 @@ from .serializers import (
 from .models import CustomUser
 from .tokens import create_jwt_pair_for_user
 
+from rest_framework.decorators import api_view, permission_classes
+
 
 class RegisterApiView(CreateAPIView):
     serializer_class = RegisterSerializer
@@ -140,10 +142,12 @@ class UserApiView(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
 
+class FollowUserView(APIView):
+    permission_classes = [IsAuthenticated]
 
-# Obtain an access token for user
-# obtain_token = obtain_jwt_token
-
-# Refresh an existing access token
-# refresh_token = refresh_jwt_token
+    def post(self, request, user_id):
+        followed_user = get_object_or_404(CustomUser, id=user_id)
+        request.user.following.add(followed_user)
+        return Response("User followed successfully")

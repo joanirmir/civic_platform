@@ -36,6 +36,8 @@ from .serializers import (
 from .models import Upload, Location, Link, FileBookmark
 from common.utils import write_file
 
+from rest_framework.decorators import api_view, permission_classes
+
 # import for TokenAuthentication
 # from rest_framework.authentication import TokenAuthentication
 # from .permission import IsAdminOrReadOnly
@@ -98,19 +100,21 @@ class UploadModifyApi(GenericAPIView):
 
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
-    permission_classes = []
+    
 
     warnings = {
         "user_locked": {"warning": "Its not possible to change the upload user."},
     }
 
-    @permission_classes(IsAuthenticatedOrReadOnly)
+    @api_view(['GET'])
+    @permission_classes([IsAuthenticatedOrReadOnly])
     def get(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
         serializer = UploadSerializer(upload_instance)
         return Response(serializer.data)
 
-    @permission_classes(IsAuthenticated)
+    @api_view(['PUT'])
+    @permission_classes([IsAuthenticated])
     def put(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
@@ -130,7 +134,8 @@ class UploadModifyApi(GenericAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @permission_classes(IsAuthenticated)
+    @api_view(['PATCH'])
+    @permission_classes([IsAuthenticated])
     def patch(self, request, pk, format=None):
         """
         Use patch instead of put. Using patch doesn't require fields.
@@ -156,7 +161,8 @@ class UploadModifyApi(GenericAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @permission_classes(IsAuthenticated, IsAdminUser)
+    @api_view(['DELETE'])
+    @permission_classes([IsAuthenticated, IsAdminUser])
     def delete(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
 
@@ -191,9 +197,9 @@ class UploadDownload(GenericAPIView):
 
 class TagSearchAPI(GenericAPIView):
     serializer_class = TagSearchSerializer
-    permission_classes = []
-
-    @permission_classes(IsAuthenticatedOrReadOnly)
+    
+    @api_view(['POST'])
+    @permission_classes([IsAuthenticatedOrReadOnly])
     def post(self, request, *args, **kwargs):
         # create a list of search terms
         raw_tags = request.data.get("search_tag").split(",")
@@ -220,7 +226,7 @@ class TagSearchAPI(GenericAPIView):
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
     serializer_class = TaggitSerializer()
-    classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         tags = Tag.objects.values()
@@ -231,7 +237,7 @@ class TagListAPI(GenericAPIView):
 
 class FileBookmarkCreate(CreateAPIView):
     serializer_class = FileBookmarkSerializer
-    classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -244,7 +250,7 @@ class FileBookmarkCreate(CreateAPIView):
 
 class FileBookmarkDetail(GenericAPIView):
     serializer_class = FileBookmarkSerializer
-    classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, pk):
         bookmark = get_object_or_404(FileBookmark, pk=pk)

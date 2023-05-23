@@ -20,6 +20,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    followers = models.ManyToManyField("self", symmetrical=False, related_name="following")
 
     # set default username/login-name
     USERNAME_FIELD = "email"

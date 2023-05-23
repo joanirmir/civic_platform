@@ -16,6 +16,7 @@ urlpatterns = [
     path("login/", views.LoginView.as_view(), name="login"),
     path("logout/", views.LogoutView.as_view(), name="logout"),
     # path("auth/login/", views.LoginView.as_view, name="auth_login"),
+    path("follower/", views.FollowUserView.as_view(), name="following"),
     path("profile/<int:pk>", views.UserApiView.as_view(), name="logged-in-profile"),
     path("jwt/create", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("jwt/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
