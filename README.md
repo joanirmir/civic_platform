@@ -32,7 +32,7 @@ Features
 | Update a comment            | x             |               |               |              | 
 | Delete a comment            | x             |x              |               |              | 
 | Tag a data record           | x             |               |               |x             | 
-| View a tag                  | x             |               |               |x             | 
+| View a tag                  | x             |x               |               |x             | 
 | Update a tag                |               |x              |               |              | 
 | Delete a tag                |               |x              |               |              | 
 | Make a bookmark on data     | x             |               |               |x             | 
