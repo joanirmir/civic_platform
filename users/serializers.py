@@ -100,7 +100,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "email", "username", "first_name", "last_name", "user_img", "followers"]
+        fields = [
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "user_img",
+            "followers",
+        ]
 
 
 class FollowUserSerializer(serializers.ModelSerializer):
@@ -111,7 +119,7 @@ class FollowUserSerializer(serializers.ModelSerializer):
         fields = ["id"]
 
     def create(self, validated_data):
-        followed_user_id = validated_data['id']
+        followed_user_id = validated_data["id"]
         followed_user = get_object_or_404(CustomUser, id=followed_user_id)
         request = self.context.get("request")
         request.user.following.add(followed_user)

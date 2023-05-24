@@ -30,7 +30,7 @@ from .serializers import (
     UserSerializer,
     LoginRequestSerializer,
     LogoutRequestSerializer,
-    FollowUserSerializer
+    FollowUserSerializer,
 )
 
 # UserCreateSerializer, LoginResponseSerializer,
@@ -94,7 +94,7 @@ class LogoutView(APIView):
         if serializer.is_valid():
             serializer.logout(request)
         return Response("Logout was successfully.")
-    
+
 
 class UserListView(APIView):
     def get(self, request):
@@ -150,14 +150,16 @@ class UserApiView(GenericAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
 
 class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FollowUserSerializer
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
         serializer.is_valid(raise_exception=True)
         serializer.create(serializer.validated_data)
         return Response("User followed successfully")

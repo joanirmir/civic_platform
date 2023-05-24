@@ -100,20 +100,19 @@ class UploadModifyApi(GenericAPIView):
 
     queryset = Upload.objects.all()
     serializer_class = UploadSerializer
-    
 
     warnings = {
         "user_locked": {"warning": "Its not possible to change the upload user."},
     }
 
-    @api_view(['GET'])
+    @api_view(["GET"])
     @permission_classes([IsAuthenticatedOrReadOnly])
     def get(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
         serializer = UploadSerializer(upload_instance)
         return Response(serializer.data)
 
-    @api_view(['PUT'])
+    @api_view(["PUT"])
     @permission_classes([IsAuthenticated])
     def put(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
@@ -134,7 +133,7 @@ class UploadModifyApi(GenericAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @api_view(['PATCH'])
+    @api_view(["PATCH"])
     @permission_classes([IsAuthenticated])
     def patch(self, request, pk, format=None):
         """
@@ -161,7 +160,7 @@ class UploadModifyApi(GenericAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @api_view(['DELETE'])
+    @api_view(["DELETE"])
     @permission_classes([IsAuthenticated, IsAdminUser])
     def delete(self, request, pk, format=None):
         upload_instance = get_object_or_404(Upload, pk=pk)
@@ -197,8 +196,8 @@ class UploadDownload(GenericAPIView):
 
 class TagSearchAPI(GenericAPIView):
     serializer_class = TagSearchSerializer
-    
-    @api_view(['POST'])
+
+    @api_view(["POST"])
     @permission_classes([IsAuthenticatedOrReadOnly])
     def post(self, request, *args, **kwargs):
         # create a list of search terms
