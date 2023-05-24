@@ -21,6 +21,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     followers = models.ManyToManyField("self", symmetrical=False, related_name="following")
+    
 
     # set default username/login-name
     USERNAME_FIELD = "email"

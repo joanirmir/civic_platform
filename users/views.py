@@ -30,6 +30,7 @@ from .serializers import (
     UserSerializer,
     LoginRequestSerializer,
     LogoutRequestSerializer,
+    FollowUserSerializer
 )
 
 # UserCreateSerializer, LoginResponseSerializer,
@@ -93,12 +94,19 @@ class LogoutView(APIView):
         if serializer.is_valid():
             serializer.logout(request)
         return Response("Logout was successfully.")
+    
+
+class UserListView(APIView):
+    def get(self, request):
+        users = CustomUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
 
 class UserApiView(GenericAPIView):
     queryset = CustomUser
     serializer_class = UserSerializer
-    classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, format=None):
         user_instance = get_object_or_404(CustomUser, pk=pk)
@@ -146,8 +154,10 @@ class UserApiView(GenericAPIView):
 
 class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = FollowUserSerializer
 
-    def post(self, request, user_id):
-        followed_user = get_object_or_404(CustomUser, id=user_id)
-        request.user.following.add(followed_user)
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.create(serializer.validated_data)
         return Response("User followed successfully")
