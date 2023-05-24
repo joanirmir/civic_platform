@@ -116,7 +116,7 @@ class UploadApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(expected_error_code, error_code)
 
-    def test_upload_put(self):
+    def test_upload_patch(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
         test_user = self.create_user()
@@ -130,6 +130,7 @@ class UploadApiTests(TestCase):
 
         patch_data = {"title": "Alternative title"}
 
+        self.client.login(email="normal@user.com", password="foo")
         patch_response = self.client.patch(
             f"/api/archive/upload/{response.data.get('id')}",
             data=patch_data,
@@ -155,11 +156,11 @@ class UploadApiTests(TestCase):
 
         upload_id = response.data.get("id")
         upload_file = response.data.get("file")
+
+        self.client.login(email="normal@user.com", password="foo")
         delete_response = self.client.delete(f"/api/archive/upload/{upload_id}")
 
-        check_if_deleted = self.client.get(
-            "/api/archive/upload/{upload_id}",
-        )
+        check_if_deleted = self.client.get("/api/archive/upload/{upload_id}")
         self.assertEqual(404, check_if_deleted.status_code)
         self.assertFalse(os.path.isfile(upload_file))
 
