@@ -24,7 +24,14 @@ from taggit.models import Tag
 
 # import app models
 from .models import Upload, Location, Link, FileBookmark, Comment
-from .serializers import (UploadSerializer, UploadPostSerializer, FileBookmarkSerializer, TagSearchSerializer, CommentPostSerializer, CommentSerializer)
+from .serializers import (
+    UploadSerializer,
+    UploadPostSerializer,
+    FileBookmarkSerializer,
+    TagSearchSerializer,
+    CommentPostSerializer,
+    CommentSerializer,
+)
 from common.utils import write_file
 
 # import for TokenAuthentication
@@ -52,7 +59,7 @@ class UploadAPI(CreateAPIView):
     queryset = Upload.objects.all()
     serializer_class = UploadPostSerializer
     parser_classes = (MultiPartParser, FormParser)
-#    # permission_classes = [IsAuthenticated]
+    #    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         serializer = UploadPostSerializer(data=request.data)
@@ -200,12 +207,12 @@ class TagSearchAPI(GenericAPIView):
 
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
-    serializer_class = TaggitSerializer()
+    serializer_class = TaggitSerializer
     # permission_classes = [IsAdminOrReadOnly, ]
 
     def get(self, request, *args, **kwargs):
         tags = Tag.objects.values()
-        tags_list = list(tags) 
+        tags_list = list(tags)
 
         return Response(tags_list)
 
@@ -231,15 +238,6 @@ class FileBookmarkDetail(GenericAPIView):
         return Response(serializer.data)
 
 
-class FileBookmarkDetail(GenericAPIView):
-    serializer_class = FileBookmarkSerializer
-
-    def get(self, request, pk):
-        bookmark = get_object_or_404(FileBookmark, pk=pk)
-        serializer = self.get_serializer(bookmark)
-        return Response(serializer.data)
-
-    
 class CommentCreateApi(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentPostSerializer
@@ -268,13 +266,18 @@ class CommentModifyApi(GenericAPIView):
     """
     Read, update and delete single db entries
     """
+
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     warnings = {
         "user_locked": {"warning": "Its not possible to change the comment author."},
-        "user_restricted": {"warning": "Only comment author is able to change this comment."},
+        "user_restricted": {
+            "warning": "Only comment author is able to change this comment."
+        },
     }
 
     def get(self, request, pk):
@@ -285,7 +288,7 @@ class CommentModifyApi(GenericAPIView):
     def patch(self, request, pk):
         comment_instance = get_object_or_404(Comment, pk=pk)
         # check if request tries to change unmodifiable upload user
-        
+
         if (
             request.data.get("user")
             and request.data.get("user") != comment_instance.user.id
@@ -295,7 +298,7 @@ class CommentModifyApi(GenericAPIView):
             )
 
         # check if other user then comment author is trying to change this comment
-        if (request.user != comment_instance.author):
+        if request.user != comment_instance.author:
             return Response(
                 self.warnings.get("user_restricted"), status=status.HTTP_400_BAD_REQUEST
             )
@@ -314,7 +317,7 @@ class CommentModifyApi(GenericAPIView):
         comment_instance = get_object_or_404(Comment, pk=pk)
 
         # check if other user then comment author is trying to change this comment
-        if (request.user != comment_instance.author):
+        if request.user != comment_instance.author:
             return Response(
                 self.warnings.get("user_restricted"), status=status.HTTP_400_BAD_REQUEST
             )

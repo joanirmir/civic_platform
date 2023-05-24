@@ -6,23 +6,19 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 
 # import external libraries
-from taggit.serializers import (TagListSerializerField,
-                                TaggitSerializer)
-
-# import external libraries
-from taggit.serializers import (TagListSerializerField,
-                                TaggitSerializer)
+from taggit.serializers import TagListSerializerField, TaggitSerializer
 
 # import project/app stuff
 from common.utils import FileUploadField, FileValidator
 from common.utils.check_url_status import is_valid_url
 
-from .models import Location, Upload, Comment, Bookmark, Tag, Link, FileBookmark
+from .models import Location, Upload, Comment, Link, FileBookmark
 from users.models import CustomUser
 from users.serializers import UserSerializer
 
 from geolocation.models import Location
 from django.contrib.gis.geos import Point as GEOSPoint
+
 
 class LinkSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,7 +118,7 @@ class UploadPostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
 
 class CommentSerializerForUploadSerializer(serializers.ModelSerializer):
-    author = UserSerializer() 
+    author = UserSerializer()
 
     class Meta:
         model = Comment
@@ -131,7 +127,7 @@ class CommentSerializerForUploadSerializer(serializers.ModelSerializer):
 
 class UploadSerializer(TaggitSerializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    location = LocationSerializer()
+    location = "LocationSerializer()"
     link = LinkSerializer()
     tags = TagListSerializerField()
     comments = CommentSerializerForUploadSerializer(many=True, read_only=True)
@@ -158,7 +154,6 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class FileBookmarkSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    file = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = FileBookmark
@@ -167,14 +162,13 @@ class FileBookmarkSerializer(serializers.ModelSerializer):
 
 
 class CommentPostSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Comment
-        exclude =  ["author"]
+        exclude = ["author"]
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = UserSerializer() 
+    author = UserSerializer()
     upload = UploadSerializer()
 
     class Meta:

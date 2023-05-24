@@ -32,12 +32,6 @@ class Migration(migrations.Migration):
                 ("note", models.TextField(null=True)),
                 ("date_added", models.DateTimeField(auto_now_add=True)),
                 (
-                    "tags",
-                    models.ManyToManyField(
-                        related_name="file_bookmarks_tags", to="the_archive.tag"
-                    ),
-                ),
-                (
                     "upload",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
