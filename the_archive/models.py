@@ -63,7 +63,9 @@ class Upload(models.Model):
 
 
 class Comment(models.Model):
-    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
+    upload = models.ForeignKey(
+        Upload, related_name="comments", on_delete=models.CASCADE
+    )
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     # author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="comments")
     content = models.TextField()
@@ -72,23 +74,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
-
-
-class Bookmark(models.Model):
-    upload = models.ForeignKey(Upload, on_delete=models.CASCADE)
-    author = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
-    tags = TaggableManager()
-    link = models.ForeignKey("Link", null=True, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.id}: {self.author}, {self.content}, {self.date_posted},{self.date_edited}"
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=200, blank=False)
-
-    def __str__(self):
-        return f"{self.id}: {self.tags}"
 
 
 class Link(models.Model):
@@ -104,7 +89,7 @@ class FileBookmark(models.Model):
     user = models.ForeignKey(CustomUser, null=True, on_delete=models.CASCADE)
     note = models.TextField(null=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    tags = models.ManyToManyField(Tag, related_name="file_bookmarks_tags")
+    tags = TaggableManager()
 
     def __str__(self):
         return f"{self.id}: {self.user}, {self.upload.title}, {self.note}, {self.date_added}"

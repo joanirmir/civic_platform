@@ -13,12 +13,14 @@ urlpatterns = [
         views.UploadDownload.as_view(),
         name="upload-download",
     ),
-    path("uploads/tags/", views.TagListAPI.as_view()),
-    path("upload/tags/search/", views.TagSearchAPI.as_view(), name="archive-tags-list"),
     path("upload/bookmark/create/", views.FileBookmarkCreate.as_view()),
     path(
         "upload/bookmark/<int:pk>/",
         views.FileBookmarkDetail.as_view(),
         name="bookmark-view",
     ),
+    path("uploads/tags/", views.TagListAPI.as_view()),
+    path("upload/tags/search/", views.TagSearchAPI.as_view(), name="archive-tags-list"),
+    path("upload/comment/", views.CommentCreateApi.as_view()),
+    path("upload/comment/<int:pk>", views.CommentModifyApi.as_view()),
 ]

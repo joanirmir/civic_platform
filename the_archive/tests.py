@@ -13,9 +13,18 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from .models import Upload, Tag, Location
+from .models import Upload, Location, FileBookmark
 from users.models import CustomUser
-from .serializers import UploadSerializer
+from geolocation.models import Location
+from .serializers import UploadSerializer, FileBookmarkSerializer
+
+
+def create_user():
+    user = CustomUser.objects.create_user(
+        email="normal@user.com", username="Testuser", password="foo"
+    )
+
+    return user
 
 
 # https://testdriven.io/blog/django-custom-user-model/
@@ -28,19 +37,16 @@ class UploadApiTests(TestCase):
         return user
 
     def get_test_data(self, file):
-        title = "Test Title"
-        media_type = "document"
-
-        tag = Tag.objects.create(name="TestTag")
-        user = self.create_user()
+        tags = ["Summer, Sun"]
 
         data = {
-            "title": title,
-            "media_type": media_type,
-            "tags": tag.id,
+            "location": "Bonn",
+            "title": "Test",
+            "zip_code": 53129,
             "file": file,
-            "location": "Berlin",
-            "zip_code": 13357,
+            "tags": tags,
+            "link": "https://www.zeit.de/index",
+            "status": "published",
         }
 
         return data
@@ -48,6 +54,7 @@ class UploadApiTests(TestCase):
     def test_upload_post(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
+        test_user = self.create_user()
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
@@ -74,6 +81,7 @@ class UploadApiTests(TestCase):
     def test_wrong_file_type_upload(self):
         file = SimpleUploadedFile("test.py", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
+        test_user = self.create_user()
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
@@ -94,6 +102,7 @@ class UploadApiTests(TestCase):
         ##########################################
         file = SimpleUploadedFile("test.jpg", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
+        test_user = self.create_user()
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
@@ -110,6 +119,7 @@ class UploadApiTests(TestCase):
     def test_upload_put(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
+        test_user = self.create_user()
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
@@ -134,6 +144,7 @@ class UploadApiTests(TestCase):
     def test_upload_delete(self):
         file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
         data = self.get_test_data(file)
+        test_user = self.create_user()
 
         self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
@@ -153,7 +164,7 @@ class UploadApiTests(TestCase):
         self.assertFalse(os.path.isfile(upload_file))
 
 
-class UploadSerializerTest(APITestCase):
+class AddBookmarkTest(TestCase):
     def create_user(self):
         user = CustomUser.objects.create_user(
             email="normal@user.com", username="Testuser", password="foo"
@@ -161,30 +172,45 @@ class UploadSerializerTest(APITestCase):
 
         return user
 
-    def test_create(self):
-        # create a test user
-        user = self.create_user()
-        # user = User.objects.create_user(username="testuser", password="testpass123")
-        self.client.force_login(user)
+    def get_test_data(self, file):
+        tags = ["Summer, Sun"]
 
-        # create test file
-        file = SimpleUploadedFile("test_file.txt", b"file_content")
+        data = {
+            "location": "Bonn",
+            "title": "Test",
+            "zip_code": 53129,
+            "file": file,
+            "tags": tags,
+            "link": "https://www.zeit.de/index",
+            "status": "published",
+        }
 
-        # create a tag
-        tag = Tag.objects.create(name="test")
+        return data
 
-        # make a POST request to the API to create a new upload
+    def test_create_bookmark(self):
+        file = SimpleUploadedFile("test.txt", b"Hallo Test", content_type="text/plain")
+        data = self.get_test_data(file)
+        test_user = self.create_user()
+
+        self.client.login(email="normal@user.com", password="foo")
         response = self.client.post(
-            reverse("upload"),
-            {
-                "location": "Test City",
-                "title": "Test",
-                "media_type": "document",
-                "zip_code": 12345,
-                "file": file,
-                "tags": [tag.pk],
-            },
-            format="multipart",
+            "/api/archive/upload/",
+            data=data,
+            headers={"Content-Type": "multipart/form-data"},
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        upload_id = response.data.get("id")
+        upload_file = response.data.get("file")
+        bookmark_data = {
+            "upload": upload_id,
+            "note": "Important",
+        }
+        self.client.login(email="normal@user.com", password="foo")
+        response_bookmark = self.client.post(
+            "/api/archive/upload/bookmark/create/",
+            data=bookmark_data,
+        )
+
+        self.assertEqual(response_bookmark.status_code, 201)
+        self.assertEqual(response_bookmark.data.get("note"), "Important")
+        self.assertEqual(response_bookmark.data.get("upload"), upload_id)
