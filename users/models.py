@@ -20,6 +20,9 @@ class CustomUser(AbstractUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    followers = models.ManyToManyField(
+        "self", symmetrical=False, related_name="following"
+    )
 
     # set default username/login-name
     USERNAME_FIELD = "email"
@@ -28,6 +31,12 @@ class CustomUser(AbstractUser, PermissionsMixin):
     class Meta:
         verbose_name = "user"
         verbose_name_plural = "users"
+
+    def get_username(self):
+        """
+        Returns the email as the username representation.
+        """
+        return self.email
 
     def get_full_name(self):
         """

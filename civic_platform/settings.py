@@ -174,8 +174,8 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
         "rest_framework.authentication.SessionAuthentication",
+        #"rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.BasicAuthentication",
       
     ),
@@ -239,3 +239,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "/"
 
 LOGIN_URL = "login"
+
+# AUTHENTICATION_BACKENDS = [
+#     "users.backends.CustomUserBackend",
+#     "django.contrib.auth.backends.ModelBackend",
+# ]

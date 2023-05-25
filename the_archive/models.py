@@ -30,6 +30,7 @@ class Upload(models.Model):
 
     file = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    # user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_names="uploads")
     author = models.CharField(max_length=50, null=True)
     title = models.CharField(max_length=120)
     caption = models.TextField(null=True)
@@ -66,6 +67,7 @@ class Comment(models.Model):
         Upload, related_name="comments", on_delete=models.CASCADE
     )
     author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    # author = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name="comments")
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     date_edited = models.DateTimeField(auto_now=True, null=True)
