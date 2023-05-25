@@ -97,6 +97,8 @@ class LogoutView(APIView):
 
 
 class UserListView(APIView):
+    serializer_class = UserSerializer
+
     def get(self, request):
         users = CustomUser.objects.all()
         serializer = UserSerializer(users, many=True)

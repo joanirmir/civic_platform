@@ -21,6 +21,7 @@ from rest_framework.permissions import (
     IsAdminUser,
 )
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import permission_classes
 
 # import external libraries
 from taggit.serializers import TaggitSerializer, TagList
@@ -38,14 +39,13 @@ from .serializers import (
 )
 from common.utils import write_file
 
-from rest_framework.decorators import api_view, permission_classes
 
 # import for TokenAuthentication
 # from rest_framework.authentication import TokenAuthentication
 # from .permission import IsAdminOrReadOnly
-
-
 # set limits for number of response elements
+
+
 class PaginatedProducts(LimitOffsetPagination):
     default_limit = 10
     max_limit = 100  # maximum size of the page that can be set by the API client
@@ -55,7 +55,7 @@ class UploadListAPI(ListAPIView):
     # in models.py we defined a custom model manager:
     # upload objects -> UploadObjects()
     # so its possible to only list elements that have "status=published"
-    queryset = Upload.objects.all()
+    queryset = Upload.uploadobjects.all()
     # queryset = Upload.objects.all()
     serializer_class = UploadSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -220,7 +220,7 @@ class TagSearchAPI(GenericAPIView):
 
 class TagListAPI(GenericAPIView):
     queryset = Tag.objects.all()
-    serializer_class = TaggitSerializer()
+    serializer_class = TaggitSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
